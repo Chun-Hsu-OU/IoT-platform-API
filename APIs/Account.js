@@ -19,6 +19,7 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 // for register usage
 account.post('/account/', unlencodedParser, function(req, res) {
   var d = new Date();
+  var checker = false;
 
   var params = {
     TableName: "Account",
@@ -31,13 +32,44 @@ account.post('/account/', unlencodedParser, function(req, res) {
     }
   }
 
-  docClient.put(params, function(err, data) {
+  // Checks if the email has been registered before
+  var params_check = {
+    TableName: "Account"
+  }
+
+  docClient.scan(params_check, onScan);
+
+  function onScan(err, data) {
     if (err) {
-      console.error("Unable to register account", req.body.name, ". Error JSON:", JSON.stringify(err, null, 2));
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
     } else {
-      console.log("PutItem succeeded:", req.body.name);
+      console.log("Scan succeeded.");
+      data.Items.forEach(function(accounts) {
+        if (accounts.email == req.body.email) {
+          checker = true;
+        }
+      });
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);
+      }
     }
-  });
+
+    if (checker == false) {
+      docClient.put(params, function(err, data) {
+        if (err) {
+          console.error("Unable to register account", req.body.name, ". Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+          console.log("PutItem succeeded:", req.body.name);
+          res.send("Register succeeded");
+        }
+      });
+    }
+    else {
+      res.send("Email address already in use");
+    }
+  }
 });
 
 // for login usage
