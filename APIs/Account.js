@@ -5,7 +5,9 @@ var uuid = require("uuid");
 
 var account = express.Router();
 
-var unlencodedParser = bodyParser.urlencoded({ extended: false });
+var unlencodedParser = bodyParser.urlencoded({
+  extended: false
+});
 
 account.use(bodyParser.json());
 
@@ -65,8 +67,7 @@ account.post('/account/', unlencodedParser, function(req, res) {
           res.send("Register succeeded");
         }
       });
-    }
-    else {
+    } else {
       res.send("Email address already in use");
     }
   }
@@ -102,6 +103,26 @@ account.post('/account/login/', unlencodedParser, function(req, res) {
     }
     res.send(login)
   }
+});
+
+// To get user information
+account.get('/account/:uuid', unlencodedParser, function(req, res) {
+  var params = {
+    TableName: "Account",
+    Key: {
+      "uuid": req.params.uuid
+    }
+  }
+  res.set('Access-Control-Allow-Origin', '*');
+
+  docClient.get(params, function(err, data) {
+    if (err) {
+      //console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      //console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
+      res.send(data.Item.name);
+    }
+  });
 });
 
 module.exports = account;
