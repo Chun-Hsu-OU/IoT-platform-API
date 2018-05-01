@@ -92,7 +92,7 @@ client2.on("message", function(topic, msg) {
 function save_data(type, value, id) {
   var options = {
     method: 'POST',
-    uri: 'http://ec2-13-125-205-170.ap-northeast-2.compute.amazonaws.com:3000/api/add/value',
+    uri: 'http://localhost:3000/api/add/value',
     body: {
       'sensorType': type,
       'value': value,
