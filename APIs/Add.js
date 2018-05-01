@@ -236,6 +236,5 @@ add.post('add/value', unlencodedParser, function(req, res) {
     }
   }
 });
-});
 
 module.exports = add;

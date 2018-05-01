@@ -83,7 +83,7 @@ client2.on("message", function(topic, msg) {
       save_data('SOIL_TEMPERATURE', data1, '087cd2d0-4d0a-11e8-bfa3-11e6060cdf65');
       save_data('SOIL_HUMIDITY', data2, 'fd6291a0-4d09-11e8-bfa3-11e6060cdf65');
     }
-    console.log("data = " + data);
+    //console.log("data = " + data);
   }
   console.log(" 收到 " + topic + " 主題，訊息：" + msg.toString());
   //console.log(sensor_data['macAddr']);
