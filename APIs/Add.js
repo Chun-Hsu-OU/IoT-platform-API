@@ -140,6 +140,7 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
       "createdtime": d.getTime(),
       "name": req.body.name,
       "sensorType": req.body.sensorType,
+      "ownerId": req.body.ownerId,
       "visible": 1
     }
   };
@@ -181,6 +182,60 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
       res.send("Sensor name already in use, please try another one");
     }
   }
+});
+
+add.post('add/value', unlencodedParser, function(req, res) {
+  var d = new Date();
+  var checker = false;
+  var time = d.getTime();
+
+  var params = {
+    TableName: req.body.sensorType,
+    Item: {
+      "sensorId": req.body.sensorId,
+      "createdtime": time,
+      "sensorType": req.body.value
+    }
+  };
+
+  var params_check = {
+    TableName: req.body.sensorType
+  }
+
+  docClient.scan(params_check, onScan);
+
+  function onScan(err, data) {
+    if (err) {
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      console.log("Scan succeeded.");
+      data.Items.forEach(function(items) {
+        if (items.createdtime == time) {
+          checker = true;
+        }
+      });
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);
+      }
+    }
+
+    if (checker ==  false) {
+      docClient.put(params, function(err, data) {
+        if (err) {
+          console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+          console.log("Added item:", JSON.stringify(data, null, 2));
+          res.send("Added sensing data of " + req.body.sensorId + " to DB");
+        }
+      });
+    }
+    else {
+      res.send("Sensor data already saved");
+    }
+  }
+});
 });
 
 module.exports = add;

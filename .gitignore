@@ -1,5 +1,4 @@
 .DS_Store
-Data_collect/mqtt.js
 config/secrets.yml
 node_modules/
 package-lock.json
