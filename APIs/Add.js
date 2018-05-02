@@ -185,14 +185,15 @@ add.post('/add/value', unlencodedParser, function(req, res) {
   var d = new Date();
   var checker = false;
   var time = d.getTime();
-  console.log("Hi" + req.body.sensorType);
+  //console.log("Hi" + req.body.sensorType);
 
   var params = {
     TableName: req.body.sensorType,
     Item: {
       "sensorId": req.body.sensorId,
       "timestamp": time,
-      "sensorType": req.body.value
+      "sensorType": req.body.sensorType,
+      "value": req.body.value
     }
   };
 
