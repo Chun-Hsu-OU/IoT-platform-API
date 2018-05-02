@@ -105,8 +105,32 @@ account.post('/account/login/', unlencodedParser, function(req, res) {
   }
 });
 
+account.get('/account/all', unlencodedParser, function(req, res) {
+  var params = {
+    TableName: "Account"
+  }
+
+  res.set('Access-Control-Allow-Origin', '*');
+  docClient.scan(params, onScan);
+
+  function onScan(err, data) {
+    if (err) {
+      //console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+      res.send("account query failed");
+    } else {
+      //console.log("Scan succeeded.");
+      res.send(JSON.stringify(data, null, 2));
+    }
+    if (typeof data.LastEvaluatedKey != "undefined") {
+      console.log("Scanning for more...");
+      params.ExclusiveStartKey = data.LastEvaluatedKey;
+      docClient.scan(params, onScan);
+    }
+  }
+});
+
 // To get user information
-account.get('/account/:uuid', unlencodedParser, function(req, res) {
+account.get('/account/single/:uuid', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Account",
     Key: {
