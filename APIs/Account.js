@@ -144,8 +144,37 @@ account.get('/account/single/:uuid', unlencodedParser, function(req, res) {
       //console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
     } else {
       //console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
-      res.send(data.Item.name);
+      res.send({"name": data.Item.name, "password": data.Item.password});
     }
+  });
+});
+
+account.post('/account/settings', unlencodedParser, function(req, res) {
+  var params = {
+    TableName: "Account",
+    Key:{
+        "uuid": req.body.uuid
+    },
+    UpdateExpression: "set password = :pwd, #usrname = :name",
+    ExpressionAttributeNames:{
+        "#usrname": "name"
+    },
+    ExpressionAttributeValues:{
+        ":pwd": req.body.password,
+        ":name": req.body.name
+    },
+    ReturnValues:"UPDATED_NEW"
+  };
+  res.set('Access-Control-Allow-Origin', '*');
+
+  console.log("Updating the item...");
+  docClient.update(params, function(err, data) {
+      if (err) {
+          console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+      } else {
+          console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+          res.send("UpdateItem succeeded");
+      }
   });
 });
 
