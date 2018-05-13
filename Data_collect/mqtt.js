@@ -24,11 +24,19 @@ var option2 = {
   password: doc.MQTT_server2.HSNL_password
 };
 
+var option3 = {
+  port: doc.MQTT_server2.port,
+  clientId: "Ilan",
+  username: doc.MQTT_server2.HSNL_user,
+  password: doc.MQTT_server2.HSNL_password
+};
+
 var topic1 = doc.MQTT_server1.topic;
 var topic2 = doc.MQTT_server2.topic;
 
 var client1 = mqtt.connect('mqtt://' + doc.MQTT_server1.IP, option1);
 var client2 = mqtt.connect('mqtt://' + doc.MQTT_server2.IP, option2);
+var client3 = mqtt.connect('mqtt://' + doc.MQTT_server2.IP, option3);
 
 client1.on("connect", function() {
   console.log("Subscribing TOPIC: " + topic1);
@@ -40,10 +48,15 @@ client2.on("connect", function() {
   client2.subscribe(topic2);
 });
 
+client3.on("connect", function() {
+  console.log("Subscribing TOPIC: " + "#");
+  client3.subscribe("#");
+});
+
 
 client1.on("message", function(topic, msg) {
   var msg_temp = msg.toString();
-  console.log("ON client1: " + msg_temp);
+  //console.log("ON client1: " + msg_temp);
   if (msg_temp.startsWith("{")) {
     var sensor_data = JSON.parse(msg_temp);
 
@@ -71,7 +84,7 @@ client1.on("message", function(topic, msg) {
 
 client2.on("message", function(topic, msg) {
   var msg_temp = msg.toString();
-  console.log(msg_temp);
+  //console.log(msg_temp);
   if (msg_temp.startsWith("[{")) {
     var sensor_data = JSON.parse(msg_temp)[0];
     if (sensor_data['macAddr'] == '000000000501086d') {
@@ -88,8 +101,19 @@ client2.on("message", function(topic, msg) {
       }
       //console.log("data = " + data);
     }
-    console.log(" 收到 " + topic + " 主題，訊息：" + msg.toString());
+    //console.log(" 收到 " + topic + " 主題，訊息：" + msg.toString());
     //console.log(sensor_data['macAddr']);
+  }
+});
+
+client3.on("message", function(topic, msg) {
+  //console.log(" 收到 " + topic + " 主題，訊息：" + msg.toString());
+  var msg_temp = msg.toString();
+  if (msg_temp.startsWith("[{")) {
+    var sensor_data = JSON.parse(msg_temp)[0];
+    if (sensor_data['macAddr'] == '00000000050102dd') {
+      console.log(sensordata);
+    }
   }
 });
 

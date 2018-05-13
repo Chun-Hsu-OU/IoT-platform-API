@@ -61,7 +61,7 @@ search.get('/sensorgroup_in_area/:areaId', function(req, res) {
     if (err) {
       console.error("Unable to Read. Error:", JSON.stringify(err, null, 2));
     } else {
-      console.log("Get item succeeded.");
+      console.log(JSON.stringify(data, null, 2));
       res.send(JSON.stringify(data, null, 2));
       }
   });

@@ -2,3 +2,4 @@
 config/secrets.yml
 node_modules/
 package-lock.json
+Data_collect/mqtt_test.js
