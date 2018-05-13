@@ -24,19 +24,11 @@ var option2 = {
   password: doc.MQTT_server2.HSNL_password
 };
 
-var option3 = {
-  port: doc.MQTT_server2.port,
-  clientId: "Ilan",
-  username: doc.MQTT_server2.HSNL_user,
-  password: doc.MQTT_server2.HSNL_password
-};
-
 var topic1 = doc.MQTT_server1.topic;
 var topic2 = doc.MQTT_server2.topic;
 
 var client1 = mqtt.connect('mqtt://' + doc.MQTT_server1.IP, option1);
 var client2 = mqtt.connect('mqtt://' + doc.MQTT_server2.IP, option2);
-var client3 = mqtt.connect('mqtt://' + doc.MQTT_server2.IP, option3);
 
 client1.on("connect", function() {
   console.log("Subscribing TOPIC: " + topic1);
@@ -46,11 +38,6 @@ client1.on("connect", function() {
 client2.on("connect", function() {
   console.log("Subscribing TOPIC: " + topic2);
   client2.subscribe(topic2);
-});
-
-client3.on("connect", function() {
-  console.log("Subscribing TOPIC: " + "#");
-  client3.subscribe("#");
 });
 
 
@@ -106,16 +93,6 @@ client2.on("message", function(topic, msg) {
   }
 });
 
-client3.on("message", function(topic, msg) {
-  //console.log(" 收到 " + topic + " 主題，訊息：" + msg.toString());
-  var msg_temp = msg.toString();
-  if (msg_temp.startsWith("[{")) {
-    var sensor_data = JSON.parse(msg_temp)[0];
-    if (sensor_data['macAddr'] == '00000000050102dd') {
-      console.log(sensordata);
-    }
-  }
-});
 
 function save_data(type, value, id) {
   var options = {
