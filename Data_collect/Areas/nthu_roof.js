@@ -1,12 +1,13 @@
 var methods = require('../methods');
 
 var mqtt = require("mqtt");
+var path = require('path');
 var yaml = require('js-yaml');
 var fs = require('fs');
 var rp = require('request-promise');
 
 try {
-  var doc = yaml.safeLoad(fs.readFileSync('../config/secrets.yml', 'utf8'));
+  var doc = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '../../config') + '/secrets.yml', 'utf8'));
 } catch (e) {
   console.log(e);
 }
