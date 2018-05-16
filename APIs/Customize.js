@@ -49,5 +49,14 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
   });
 });
 
+custom.get('/authkey', function(req, res) {
+  try {
+    var doc = yaml.safeLoad(fs.readFileSync('./config/secrets.yml', 'utf8'));
+  } catch (e) {
+    console.log(e);
+  }
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.send(doc.Crypt.KEY);
+});
 
 module.exports = custom;
