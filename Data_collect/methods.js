@@ -1,3 +1,5 @@
+var rp = require('request-promise');
+
 var save_data = function(type, value, id) {
   var options = {
     method: 'POST',
