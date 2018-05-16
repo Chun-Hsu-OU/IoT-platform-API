@@ -38,6 +38,9 @@ search.get('/area/:ownerId', function(req, res, next) {
       console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
     } else {
       console.log("Query succeeded.");
+      data.Items.sort(function(a, b) {
+        return parseFloat(a.createdtime) - parseFloat(b.createdtime);
+      });
       res.write(JSON.stringify(data, null, 2));
       res.end();
     }
@@ -62,8 +65,11 @@ search.get('/sensorgroup_in_area/:areaId', function(req, res) {
       console.error("Unable to Read. Error:", JSON.stringify(err, null, 2));
     } else {
       console.log(JSON.stringify(data, null, 2));
+      data.Items.sort(function(a, b) {
+        return parseFloat(a.createdtime) - parseFloat(b.createdtime);
+      });
       res.send(JSON.stringify(data, null, 2));
-      }
+    }
   });
 });
 
@@ -85,8 +91,11 @@ search.get('/sensors_in_group/:groupId', function(req, res) {
       console.error("Unable to Read. Error:", JSON.stringify(err, null, 2));
     } else {
       console.log("Get item succeeded.");
+      data.Items.sort(function(a, b) {
+        return parseFloat(a.createdtime) - parseFloat(b.createdtime);
+      });
       res.send(JSON.stringify(data, null, 2));
-      }
+    }
   });
 });
 
@@ -123,6 +132,9 @@ search.get('/sensors/:sensortype/:sensorid', function(req, res) {
       console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
     } else {
       console.log("Query succeeded.");
+      data.Items.sort(function(a, b) {
+        return parseFloat(a.createdtime) - parseFloat(b.createdtime);
+      });
       res.send(JSON.stringify(data, null, 2));
     }
   });
@@ -145,18 +157,21 @@ search.get('/sensors_owned/:ownerId', function(req, res) {
   docClient.scan(params, onScan);
 
   function onScan(err, data) {
-      if (err) {
-          console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
-      } else {
-          // print all the movies
-          console.log("Scan succeeded.");
-          res.send(JSON.stringify(data, null, 2));
-          if (typeof data.LastEvaluatedKey != "undefined") {
-              console.log("Scanning for more...");
-              params.ExclusiveStartKey = data.LastEvaluatedKey;
-              docClient.scan(params, onScan);
-          }
+    if (err) {
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      // print all the movies
+      console.log("Scan succeeded.");
+      data.Items.sort(function(a, b) {
+        return parseFloat(a.createdtime) - parseFloat(b.createdtime);
+      });
+      res.send(JSON.stringify(data, null, 2));
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);
       }
+    }
   }
 });
 
