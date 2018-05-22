@@ -11,6 +11,7 @@ var search = require('./APIs/Search');
 var add = require('./APIs/Add');
 var customize = require('./APIs/Customize');
 var delete_item = require('./APIs/Delete');
+var agri_log = require('./APIs/Agri_log');
 
 var unlencodedParser = bodyParser.urlencoded({ extended: false });
 
@@ -19,6 +20,7 @@ app.use('/api/', search);
 app.use('/api/', add);
 app.use('/api/', customize);
 app.use('/api/', delete_item);
+app.use('/api/', agri_log);
 
 app.listen(port, function() {
     console.log('ON localhost port 3000');

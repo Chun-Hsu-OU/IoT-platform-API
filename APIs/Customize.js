@@ -34,9 +34,6 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
       ":t2": Number(req.params.end)
     }
   };
-  console.log(req.params.sensorid);
-  console.log(req.params.begin);
-  console.log(req.params.end);
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   docClient.query(params, function(err, data) {
