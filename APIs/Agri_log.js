@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var AWS = require("aws-sdk");
+
 //var uuid = require("uuid");
 
 var agri_log = express.Router();
@@ -33,6 +34,7 @@ agri_log.post('/add/log', unlencodedParser, function(req, res) {
       "memo": req.body.memo,
       "set_time": req.body.set_time,
       "author": req.body.author,
+      "files": req.body.files,
       "visible": 1
     }
   };
@@ -113,12 +115,14 @@ agri_log.post('/update/log', unlencodedParser, function(req, res) {
       "ownerId": req.body.ownerId,
       "timestamp": req.body.timestamp
     },
-    UpdateExpression: "set area = :new_area, memo = :new_memo, author = :new_author, set_time = :new_set_time",
+    UpdateExpression: "set area = :new_area, memo = :new_memo, author = :new_author, set_time = :new_set_time, type = :new_type, file = :new_file",
     ExpressionAttributeValues: {
       ":new_area": req.body.area,
       ":new_memo": req.body.memo,
       ":new_author": req.body.author,
-      ":new_set_time": req.body.set_time
+      ":new_set_time": req.body.set_time,
+      ":new_type": req.body.type,
+      ":new_file": req.body.photo
     },
     ReturnValues: "UPDATED_NEW"
   };
