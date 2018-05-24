@@ -43,7 +43,7 @@ agri_log.post('/add/log', unlencodedParser, function(req, res) {
       console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
     } else {
       console.log("Added item:", JSON.stringify(data, null, 2));
-      res.send("Added Log");
+      res.send("Added Log in timestamp " + time);
     }
   });
 });
@@ -115,14 +115,14 @@ agri_log.post('/update/log', unlencodedParser, function(req, res) {
       "ownerId": req.body.ownerId,
       "timestamp": req.body.timestamp
     },
-    UpdateExpression: "set area = :new_area, memo = :new_memo, author = :new_author, set_time = :new_set_time, type = :new_type, file = :new_file",
+    UpdateExpression: "set area = :new_area, memo = :new_memo, author = :new_author, set_time = :new_set_time, type = :new_type, files = :new_files",
     ExpressionAttributeValues: {
       ":new_area": req.body.area,
       ":new_memo": req.body.memo,
       ":new_author": req.body.author,
       ":new_set_time": req.body.set_time,
       ":new_type": req.body.type,
-      ":new_file": req.body.photo
+      ":new_files": req.body.files
     },
     ReturnValues: "UPDATED_NEW"
   };
