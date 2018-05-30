@@ -115,7 +115,10 @@ agri_log.post('/update/log', unlencodedParser, function(req, res) {
       "ownerId": req.body.ownerId,
       "timestamp": req.body.timestamp
     },
-    UpdateExpression: "set area = :new_area, memo = :new_memo, author = :new_author, set_time = :new_set_time, type = :new_type, files = :new_files",
+    UpdateExpression: "set area = :new_area, memo = :new_memo, author = :new_author, set_time = :new_set_time, #log_type = :new_type, files = :new_files",
+    ExpressionAttributeNames:{
+        "#log_type": "type"
+    },
     ExpressionAttributeValues: {
       ":new_area": req.body.area,
       ":new_memo": req.body.memo,
