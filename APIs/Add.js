@@ -29,6 +29,8 @@ add.post('/add/area', unlencodedParser, function(req, res) {
       "ownerId": req.body.ownerId,
       "createdtime": d.getTime(),
       "name": req.body.name,
+      "location": req.body.location,
+      "map_location": req.body.map_location,
       "visible": 1
     }
   };
@@ -45,7 +47,7 @@ add.post('/add/area', unlencodedParser, function(req, res) {
     } else {
       console.log("Scan succeeded.");
       data.Items.forEach(function(items) {
-        if (items.name == req.body.name) {
+        if (items.name == req.body.name && visible == 1) {
           checker = true;
         }
       });
@@ -83,6 +85,8 @@ add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
       "areaId": req.body.areaId,
       "createdtime": d.getTime(),
       "name": req.body.name,
+      "description": req.body.name,
+      "plant": req.body.plant,
       "visible": 1
     }
   };
@@ -99,7 +103,7 @@ add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
     } else {
       console.log("Scan succeeded.");
       data.Items.forEach(function(items) {
-        if (items.name == req.body.name) {
+        if (items.name == req.body.name && visible == 1) {
           checker = true;
         }
       });
@@ -155,7 +159,7 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
     } else {
       console.log("Scan succeeded.");
       data.Items.forEach(function(items) {
-        if (items.name == req.body.name) {
+        if (items.name == req.body.name && visible == 1) {
           checker = true;
         }
       });

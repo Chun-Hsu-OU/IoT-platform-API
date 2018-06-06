@@ -51,7 +51,7 @@ var start = function() {
         }
         else if (data.startsWith("B")) {
           battery = parseFloat(data.slice(6));
-          methods.save_data('LIGHT_INTENSITY', battery, '5231bd70-60c7-11e8-b158-cff2cd389bf6');
+          methods.save_data('BATTERY_VOLTAGE', battery, '5231bd70-60c7-11e8-b158-cff2cd389bf6');
         }
       }
     }
