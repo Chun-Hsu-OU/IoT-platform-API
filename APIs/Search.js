@@ -102,17 +102,8 @@ search.get('/sensors_in_group/:groupId', function(req, res) {
 //gets single sensorId
 search.get('/sensors/:sensortype/:sensorid', function(req, res) {
   var d = new Date();
-  var adjust;
+  var adjust = 3600*1000;
 
-  if (req.params.sensortype == "AIR_HUMIDITY") {
-    adjust = 73000;
-  } else if (req.params.sensortype == "AIR_TEMPERATURE") {
-    adjust = 73000;
-  } else {
-    adjust = 7300000;
-  }
-
-  // each sensor has a different time sync
   var params = {
     TableName: req.params.sensortype,
     ProjectionExpression: "sensorId, #time_id, #v",
@@ -126,16 +117,19 @@ search.get('/sensors/:sensortype/:sensorid', function(req, res) {
       ":t1": (d.getTime() - adjust)
     }
   };
+
   res.setHeader('Access-Control-Allow-Origin', '*');
+
   docClient.query(params, function(err, data) {
     if (err) {
       console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
     } else {
       console.log("Query succeeded.");
       data.Items.sort(function(a, b) {
-        return parseFloat(a.createdtime) - parseFloat(b.createdtime);
+        return parseFloat(a.timestamp) - parseFloat(b.timestamp);
       });
-      res.send(JSON.stringify(data, null, 2));
+      length = data.Count;
+      res.send(JSON.stringify(data.Items[length - 1], null, 2));
     }
   });
 });
