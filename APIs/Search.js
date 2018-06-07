@@ -129,7 +129,12 @@ search.get('/sensors/:sensortype/:sensorid', function(req, res) {
         return parseFloat(a.timestamp) - parseFloat(b.timestamp);
       });
       length = data.Count;
-      res.send(JSON.stringify(data.Items[length - 1], null, 2));
+      if (length > 0) {
+        res.send(JSON.stringify(data.Items[length - 1], null, 2));
+      }
+      else {
+        res.send("No data");
+      }
     }
   });
 });
