@@ -14,7 +14,8 @@ var add = require('./APIs/Add');
 var customize = require('./APIs/Customize');
 var delete_item = require('./APIs/Delete');
 var agri_log = require('./APIs/Agri_log');
-var file_manage = require('./APIs/S3_file_manage')
+var file_manage = require('./APIs/S3_file_manage');
+var expert_system = require('./APIs/expert_system');
 
 //var unlencodedParser = bodyParser.urlencoded({ extended: false });
 
@@ -30,6 +31,7 @@ app.use('/api/', customize);
 app.use('/api/', delete_item);
 app.use('/api/', agri_log);
 app.use('/api/', file_manage);
+app.use('/api/', expert_system);
 
 app.listen(port, function() {
     console.log('ON localhost port 3000');
