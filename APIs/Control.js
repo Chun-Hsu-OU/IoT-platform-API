@@ -20,6 +20,33 @@ AWS.config.update({
 
 var docClient = new AWS.DynamoDB.DocumentClient();
 
+// Gets the cirtain controller
+control.get('/control/single/:controllerId', function(req, res) {
+  var params = {
+    TableName: "Controller",
+    KeyConditionExpression: "#control = :controller_id",
+    ExpressionAttributeNames: {
+      "#control": "controllerId"
+    },
+    ExpressionAttributeValues: {
+      ":controller_id": req.params.controllerId
+    }
+  };
+
+  res.set('Access-Control-Allow-Origin', '*');
+
+  docClient.query(params, function(err, data) {
+    if (err) {
+      console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
+      res.send("Unable to query the table.");
+    } else {
+      console.log("Query succeeded.");
+      res.write(JSON.stringify(data, null, 2));
+      res.end();
+    }
+  });
+});
+
 // Gets all the controllers that a sensor hub has
 control.get('/control/search/:groupId', function(req, res) {
   var params = {
@@ -39,6 +66,7 @@ control.get('/control/search/:groupId', function(req, res) {
   function onScan(err, data) {
     if (err) {
       console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+      res.send("Unable to scan the table.");
     } else {
       // print all the movies
       console.log("Scan succeeded.");

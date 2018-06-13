@@ -39,6 +39,7 @@ add.post('/add/area', unlencodedParser, function(req, res) {
     TableName: "Areas"
   }
 
+  res.set('Access-Control-Allow-Origin', '*');
   docClient.scan(params_check, onScan);
 
   function onScan(err, data) {
@@ -95,6 +96,7 @@ add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
     TableName: "Sensor_Group"
   }
 
+  res.set('Access-Control-Allow-Origin', '*');
   docClient.scan(params_check, onScan);
 
   function onScan(err, data) {
@@ -151,6 +153,7 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
     TableName: "Sensors"
   }
 
+  res.set('Access-Control-Allow-Origin', '*');
   docClient.scan(params_check, onScan);
 
   function onScan(err, data) {
