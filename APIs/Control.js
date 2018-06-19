@@ -83,16 +83,18 @@ control.get('/control/search/:groupId', function(req, res) {
   }
 });
 
-control.post('/control/limit', unlencodedParser, function(req, res) {
+control.post('/control/rule', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Controller",
     Key: {
         "controllerId": req.body.controllerId
     },
-    UpdateExpression: "set limit_min = :min, limit_max = :max",
+    UpdateExpression: "set #update_rules = :rules",
+    ExpressionAttributeNames:{
+        "#update_rules": "rules"
+    },
     ExpressionAttributeValues:{
-        ":min": req.body.min,
-        ":max": req.body.max
+        ":rules": req.body.rules
     },
     ReturnValues:"UPDATED_NEW"
   };
