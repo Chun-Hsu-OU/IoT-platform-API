@@ -59,7 +59,8 @@ search.get('/sensorgroup_in_area/:areaId', function(req, res) {
       ":area_id": req.params.areaId
     }
   };
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Origin', '*');
+
   docClient.query(params, function(err, data) {
     if (err) {
       console.error("Unable to Read. Error:", JSON.stringify(err, null, 2));
@@ -85,7 +86,8 @@ search.get('/sensors_in_group/:groupId', function(req, res) {
       ":group_id": req.params.groupId
     }
   };
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Origin', '*');
+
   docClient.query(params, function(err, data) {
     if (err) {
       console.error("Unable to Read. Error:", JSON.stringify(err, null, 2));
@@ -118,7 +120,7 @@ search.get('/sensors/:sensortype/:sensorid', function(req, res) {
     }
   };
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Origin', '*');
 
   docClient.query(params, function(err, data) {
     if (err) {
@@ -151,7 +153,7 @@ search.get('/sensors_owned/:ownerId', function(req, res) {
       ":owner_id": req.params.ownerId
     }
   };
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Origin', '*');
 
   docClient.scan(params, onScan);
 

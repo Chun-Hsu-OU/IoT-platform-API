@@ -35,7 +35,7 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
     }
   };
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Origin', '*');
   docClient.query(params, function(err, data) {
     if (err) {
       console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
@@ -52,7 +52,7 @@ custom.get('/authkey', function(req, res) {
   } catch (e) {
     console.log(e);
   }
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Origin', '*');
   res.send(doc.Crypt.KEY);
 });
 

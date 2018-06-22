@@ -60,7 +60,7 @@ agri_log.get('/search/log/:feature/:value', unlencodedParser, function(req, res)
     }
   };
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Origin', '*');
   docClient.scan(params, onScan);
 
   function onScan(err, data) {
