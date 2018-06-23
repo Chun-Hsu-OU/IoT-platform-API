@@ -119,7 +119,7 @@ file_manage.get('/search/file/:ownerId/:timestamp/:file', function(req, res, nex
 
       //console.log(data.Body.toString('base64'));
 
-      res.send(data.Body.toString('base64'));
+      res.send(data);
       res.end();
     });
   });
