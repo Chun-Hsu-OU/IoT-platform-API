@@ -112,7 +112,14 @@ file_manage.get('/search/file/:ownerId/:timestamp/:file', function(req, res, nex
       console.log('success');
       console.log(data);
 
-      res.send(data);
+      res.set('Access-Control-Allow-Origin', '*');
+
+      //var a = data.Body.toString('base64');
+      //console.log(a);
+
+      //console.log(data.Body.toString('base64'));
+
+      res.send(data.Body.toString('base64'));
       res.end();
     });
   });
