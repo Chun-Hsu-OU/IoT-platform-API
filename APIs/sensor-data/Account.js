@@ -62,6 +62,7 @@ account.post('/account/', unlencodedParser, function(req, res) {
       docClient.put(params, function(err, data) {
         if (err) {
           console.error("Unable to register account", req.body.name, ". Error JSON:", JSON.stringify(err, null, 2));
+          res.send("Unable to register account", req.body.name);
         } else {
           console.log("PutItem succeeded:", req.body.name);
           res.send("Register succeeded");
@@ -141,10 +142,14 @@ account.get('/account/single/:uuid', unlencodedParser, function(req, res) {
 
   docClient.get(params, function(err, data) {
     if (err) {
-      //console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+      console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+      res.send("Error loading data");
     } else {
-      //console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
-      res.send({"name": data.Item.name, "password": data.Item.password});
+      try {
+        res.send({"name": data.Item.name, "password": data.Item.password});
+      } catch(err) {
+        res.send("No Such Account");
+      }
     }
   });
 });

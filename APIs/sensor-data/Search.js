@@ -36,6 +36,7 @@ search.get('/area/:ownerId', function(req, res, next) {
   docClient.query(params, function(err, data) {
     if (err) {
       console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
+      res.send("Unable to Query. Error:", JSON.stringify(err, null, 2));
     } else {
       console.log("Query succeeded.");
       data.Items.sort(function(a, b) {
@@ -64,6 +65,7 @@ search.get('/sensorgroup_in_area/:areaId', function(req, res) {
   docClient.query(params, function(err, data) {
     if (err) {
       console.error("Unable to Read. Error:", JSON.stringify(err, null, 2));
+      res.send("Unable to Query. Error:", JSON.stringify(err, null, 2));
     } else {
       console.log(JSON.stringify(data, null, 2));
       data.Items.sort(function(a, b) {
@@ -91,6 +93,7 @@ search.get('/sensors_in_group/:groupId', function(req, res) {
   docClient.query(params, function(err, data) {
     if (err) {
       console.error("Unable to Read. Error:", JSON.stringify(err, null, 2));
+      res.send("Unable to Query. Error:", JSON.stringify(err, null, 2));
     } else {
       console.log("Get item succeeded.");
       data.Items.sort(function(a, b) {
