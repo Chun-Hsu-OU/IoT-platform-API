@@ -14,7 +14,9 @@ var path = require('path');
 var file_manage = express.Router();
 
 file_manage.use(busboy());
-file_manage.use(bodyParser.urlencoded({ extended: true }));
+file_manage.use(bodyParser.urlencoded({
+  extended: true
+}));
 file_manage.use(bodyParser.json());
 file_manage.use(busboyBodyParser());
 
@@ -29,7 +31,9 @@ const BUCKET_NAME = doc.S3_config.BUCKET_NAME;
 const IAM_USER_KEY = doc.S3_config.IAM_USER_KEY;
 const IAM_USER_SECRET = doc.S3_config.IAM_USER_SECRET;
 
-AWS.config.update({region: 'ap-northeast-2'});
+AWS.config.update({
+  region: 'ap-northeast-2'
+});
 
 let s3bucket = new AWS.S3({
   accessKeyId: IAM_USER_KEY,
@@ -83,17 +87,20 @@ file_manage.get('/download/file/:ownerId/:timestamp/:file', function(req, res, n
       Bucket: BUCKET_NAME,
       Key: req.params.ownerId + '/' + req.params.timestamp + '/' + req.params.file
     };
+
+    res.set('Access-Control-Allow-Origin', '*');
     s3bucket.getObject(params, function(err, data) {
       if (err) {
         console.log('error in callback');
         console.log(err);
-      }
-      console.log('success');
-      console.log(data);
+      } else {
+        console.log('success');
+        console.log(data);
 
-      res.setHeader('Content-disposition', 'attachment; filename=' + req.params.file);
-      res.setHeader('Content-length', data.ContentLength);
-      res.end(data.Body);
+        res.setHeader('Content-disposition', 'attachment; filename=' + req.params.file);
+        res.setHeader('Content-length', data.ContentLength);
+        res.end(data.Body);
+      }
     });
   });
 });
@@ -104,23 +111,19 @@ file_manage.get('/search/file/:ownerId/:timestamp/:file', function(req, res, nex
       Bucket: BUCKET_NAME,
       Key: req.params.ownerId + '/' + req.params.timestamp + '/' + req.params.file
     };
+
+    res.set('Access-Control-Allow-Origin', '*');
     s3bucket.getObject(params, function(err, data) {
       if (err) {
         console.log('error in callback');
         console.log(err);
+        res.send("No Data");
+        res.end();
+      } else {
+        console.log('success');
+        res.send(data.Body.toString('base64'));
+        res.end();
       }
-      console.log('success');
-      console.log(data);
-
-      res.set('Access-Control-Allow-Origin', '*');
-
-      //var a = data.Body.toString('base64');
-      //console.log(a);
-
-      //console.log(data.Body.toString('base64'));
-
-      res.send(data.Body.toString('base64'));
-      res.end();
     });
   });
 });
