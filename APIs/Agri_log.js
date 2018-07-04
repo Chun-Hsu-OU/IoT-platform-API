@@ -35,6 +35,9 @@ agri_log.post('/add/log', unlencodedParser, function(req, res) {
       "set_time": req.body.set_time,
       "author": req.body.author,
       "files": req.body.files,
+      "machine": req.body.machine,
+      "crop": req.body.crop,
+      "diseases": req.body.diseases,
       "visible": 1
     }
   };
@@ -115,7 +118,7 @@ agri_log.post('/update/log', unlencodedParser, function(req, res) {
       "ownerId": req.body.ownerId,
       "timestamp": req.body.timestamp
     },
-    UpdateExpression: "set area = :new_area, memo = :new_memo, author = :new_author, set_time = :new_set_time, #log_type = :new_type, files = :new_files",
+    UpdateExpression: "set area = :new_area, memo = :new_memo, author = :new_author, set_time = :new_set_time, #log_type = :new_type, files = :new_files, machine = :new_machine, crop = :new_crop, diseases = :new_diseases",
     ExpressionAttributeNames:{
         "#log_type": "type"
     },
@@ -125,7 +128,10 @@ agri_log.post('/update/log', unlencodedParser, function(req, res) {
       ":new_author": req.body.author,
       ":new_set_time": req.body.set_time,
       ":new_type": req.body.type,
-      ":new_files": req.body.files
+      ":new_files": req.body.files,
+      ":new_machine": req.body.machine,
+      ":new_crop": req.body.crop,
+      ":new_diseases": req.body.diseases
     },
     ReturnValues: "UPDATED_NEW"
   };

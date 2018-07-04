@@ -119,36 +119,6 @@ control.get('/search/control/owner/:ownerId', function(req, res) {
   }
 });
 
-control.post('/control/rule', unlencodedParser, function(req, res) {
-  var params = {
-    TableName: "Controller",
-    Key: {
-        "controllerId": req.body.controllerId
-    },
-    UpdateExpression: "set #update_rules = :rules",
-    ExpressionAttributeNames:{
-        "#update_rules": "rules"
-    },
-    ExpressionAttributeValues:{
-        ":rules": req.body.rules
-    },
-    ReturnValues:"UPDATED_NEW"
-  };
-
-  res.set('Access-Control-Allow-Origin', '*');
-
-  console.log("Updating the item...");
-  docClient.update(params, function(err, data) {
-      if (err) {
-          console.error("Unable to UPDATE item. Error JSON:", JSON.stringify(err, null, 2));
-          res.send("Error Updating Item");
-      } else {
-          console.log("UPDATEItem succeeded:", JSON.stringify(data, null, 2));
-          res.send("UPDATEItem succeeded");
-      }
-  });
-});
-
 control.post('/control/:item', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Controller",
