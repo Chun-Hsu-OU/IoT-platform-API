@@ -39,7 +39,7 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
   docClient.query(params, function(err, data) {
     if (err) {
       console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
-      res.send("Unable to Query. Error:", JSON.stringify(err, null, 2));
+      res.status(status).send("Unable to Query. Error:", JSON.stringify(err, null, 2));
     } else {
       console.log("Query succeeded.");
       res.send(JSON.stringify(data, null, 2));
