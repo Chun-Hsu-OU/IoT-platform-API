@@ -31,6 +31,8 @@ delete_item.post('/delete_item/area', unlencodedParser, function(req, res) {
   };
 
   console.log("Updating the item...");
+  res.set('Access-Control-Allow-Origin', '*');
+
   docClient.update(params, function(err, data) {
     if (err) {
       console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
@@ -57,6 +59,8 @@ delete_item.post('/delete_item/group', unlencodedParser, function(req, res) {
   };
 
   console.log("Updating the item...");
+  res.set('Access-Control-Allow-Origin', '*');
+
   docClient.update(params, function(err, data) {
     if (err) {
       console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
@@ -83,6 +87,8 @@ delete_item.post('/delete_item/sensor', unlencodedParser, function(req, res) {
   };
 
   console.log("Updating the item...");
+  res.set('Access-Control-Allow-Origin', '*');
+  
   docClient.update(params, function(err, data) {
     if (err) {
       console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
