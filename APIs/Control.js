@@ -20,7 +20,7 @@ AWS.config.update({
 
 var docClient = new AWS.DynamoDB.DocumentClient();
 
-// Gets the cirtain controller
+// Gets the certain controller
 control.get('/control/single/:controllerId', function(req, res) {
   var params = {
     TableName: "Controller",
@@ -93,6 +93,42 @@ control.get('/search/control/owner/:ownerId', function(req, res) {
     },
     ExpressionAttributeValues: {
       ":owner_id": req.params.ownerId
+    }
+  };
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  docClient.scan(params, onScan);
+
+  function onScan(err, data) {
+    if (err) {
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+      res.send("Unable to scan the table.");
+    } else {
+      // print all the movies
+      console.log("Scan succeeded.");
+      data.Items.sort(function(a, b) {
+        return parseFloat(a.createdtime) - parseFloat(b.createdtime);
+      });
+      res.send(JSON.stringify(data, null, 2));
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);
+      }
+    }
+  }
+});
+
+// Gets all the controllers
+control.get('/search/control/all', function(req, res) {
+  var params = {
+    TableName: "Controller",
+    FilterExpression: "#exist = :status",
+    ExpressionAttributeNames: {
+      "#exist": "visible"
+    },
+    ExpressionAttributeValues: {
+      ":status": 1
     }
   };
   res.setHeader('Access-Control-Allow-Origin', '*');
