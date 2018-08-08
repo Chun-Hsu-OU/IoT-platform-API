@@ -48,4 +48,13 @@ expert.get('/expert/:product', function(req, res) {
   }
 });
 
+expert.get('/expert/hello/hello', function(req, res) {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+    console.log("Scan succeeded.");
+    res.send(JSON.stringify("hello", null, 2));
+});
+
+
 module.exports = expert;
