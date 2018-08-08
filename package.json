@@ -1,0 +1,29 @@
+{
+  "name": "iot-platform-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chun-Hsu-OU/IoT-platform-API.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Chun-Hsu-OU/IoT-platform-API/issues"
+  },
+  "homepage": "https://github.com/Chun-Hsu-OU/IoT-platform-API#readme",
+  "description": "",
+  "dependencies": {
+    "aws-sdk": "^2.287.0",
+    "busboy-body-parser": "^0.3.2",
+    "connect-busboy": "0.0.2",
+    "express": "^4.16.3",
+    "js-yaml": "^3.12.0",
+    "mqtt": "^2.18.3",
+    "request": "^2.87.0",
+    "request-promise": "^4.2.2"
+  }
+}
