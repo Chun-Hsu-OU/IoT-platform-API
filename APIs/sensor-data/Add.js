@@ -48,7 +48,7 @@ add.post('/add/area', unlencodedParser, function(req, res) {
     } else {
       console.log("Scan succeeded.");
       data.Items.forEach(function(items) {
-        if (items.name == req.body.name && visible == 1) {
+        if (items.name == req.body.name && items.visible == 1) {
           checker = true;
         }
       });
@@ -105,7 +105,7 @@ add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
     } else {
       console.log("Scan succeeded.");
       data.Items.forEach(function(items) {
-        if (items.name == req.body.name && visible == 1) {
+        if (items.name == req.body.name && items.visible == 1) {
           checker = true;
         }
       });
@@ -162,7 +162,7 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
     } else {
       console.log("Scan succeeded.");
       data.Items.forEach(function(items) {
-        if (items.name == req.body.name && visible == 1) {
+        if (items.name == req.body.name && items.visible == 1) {
           checker = true;
         }
       });
