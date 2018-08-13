@@ -30,7 +30,8 @@ add.post('/add/area', unlencodedParser, function(req, res) {
       "createdtime": d.getTime(),
       "name": req.body.name,
       "location": req.body.location,
-      "map_location": req.body.map_location,
+      "longitude": req.body.longitude,
+      "latitude": req.body.latitude,
       "visible": 1
     }
   };
