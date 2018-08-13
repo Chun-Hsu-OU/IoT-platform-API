@@ -29,14 +29,18 @@ update.post('/update/area', unlencodedParser, function(req, res) {
         "ownerId": req.body.ownerId,
         "areaId": req.body.areaId
     },
-    UpdateExpression: "set #locate = :loc, #area_name = :name",
+    UpdateExpression: "set #locate = :loc, #area_name = :name, #longitude = :lng, #latitude = :lat",
     ExpressionAttributeNames:{
         "#locate": "location",
-        "#area_name": "name"
+        "#area_name": "name",
+        "#longitude": "longitude",
+        "#latitude": "latitude"
     },
     ExpressionAttributeValues:{
         ":loc": req.body.location,
-        ":name": req.body.name
+        ":name": req.body.name,
+        ":lng": req.body.longitude,
+        ":lat": req.body.latitude
     },
     ReturnValues:"UPDATED_NEW"
   };
