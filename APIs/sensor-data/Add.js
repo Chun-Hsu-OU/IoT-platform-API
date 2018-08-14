@@ -1,12 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var AWS = require("aws-sdk");
+var uuid = require("uuid");
+
 var unlencodedParser = bodyParser.urlencoded({
   extended: false
 });
 
 var add = express.Router();
-const uuidv1 = require('uuid/v1');
 
 add.use(bodyParser.json());
 
@@ -25,7 +26,7 @@ add.post('/add/area', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Areas",
     Item: {
-      "areaId": uuidv1(),
+      "areaId": uuid.v4(),
       "ownerId": req.body.ownerId,
       "createdtime": d.getTime(),
       "name": req.body.name,
@@ -83,7 +84,7 @@ add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Sensor_Group",
     Item: {
-      "groupId": uuidv1(),
+      "groupId": uuid.v4(),
       "areaId": req.body.areaId,
       "createdtime": d.getTime(),
       "name": req.body.name,
@@ -140,7 +141,7 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Sensors",
     Item: {
-      "sensorId": uuidv1(),
+      "sensorId": uuid.v4(),
       "groupId": req.body.groupId,
       "createdtime": d.getTime(),
       "name": req.body.name,
@@ -213,6 +214,58 @@ add.post('/add/value', unlencodedParser, function(req, res) {
       res.send("Added sensing data of " + req.body.sensorId + " to DB");
     }
   });
+});
+
+add.post('/add/ipc', unlencodedParser, function(req, res) {
+  var checker = false;
+
+  var params = {
+    TableName: "ipc",
+    Item: {
+      "ipcId": uuid.v4(),
+      "ownerId": req.body.ownerId,
+      "name": req.body.name,
+      "ip": req.body.ip
+    }
+  };
+
+  var params_check = {
+    TableName: "ipc"
+  }
+
+  res.set('Access-Control-Allow-Origin', '*');
+  docClient.scan(params_check, onScan);
+
+  function onScan(err, data) {
+    if (err) {
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      console.log("Scan succeeded.");
+      data.Items.forEach(function(items) {
+        if (items.name == req.body.name && items.ip == req.body.ip) {
+          checker = true;
+        }
+      });
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);
+      }
+    }
+
+    if (checker == false) {
+      docClient.put(params, function(err, data) {
+        if (err) {
+          console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+          console.log("Added item:", JSON.stringify(data, null, 2));
+          res.send("Added " + req.body.name + " to ipc");
+        }
+      });
+    } else {
+      res.send("ipc name already in use, please try another one");
+    }
+  }
 });
 
 module.exports = add;

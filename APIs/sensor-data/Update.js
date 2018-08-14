@@ -128,4 +128,37 @@ update.post('/update/sensor', unlencodedParser, function(req, res) {
   });
 });
 
+// Updates the chosen item in the "ipc Table"
+update.post('/update/ipc/:ipc_id', unlencodedParser, function(req, res) {
+    var params = {
+      TableName: "ipc",
+      Key: {
+          "ipcId": req.params.ipc_id
+      },
+      UpdateExpression: "set #ipc_name = :name, #ipc_ip = :ip",
+      ExpressionAttributeNames:{
+          "#ipc_name": "name",
+          "#ipc_ip": "ip"
+      },
+      ExpressionAttributeValues:{
+          ":name": req.body.name,
+          ":ip": req.body.ip
+      },
+      ReturnValues:"UPDATED_NEW"
+    };
+  
+    res.set('Access-Control-Allow-Origin', '*');
+  
+    console.log("Updating the item...");
+    docClient.update(params, function(err, data) {
+        if (err) {
+            console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+            res.send("Error Updating Item");
+        } else {
+            console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+            res.send("UpdateItem succeeded");
+        }
+    });
+  });
+
 module.exports = update;

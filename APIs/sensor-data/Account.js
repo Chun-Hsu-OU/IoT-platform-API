@@ -22,6 +22,11 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 account.post('/account/', unlencodedParser, function(req, res) {
   var d = new Date();
   var checker = false;
+  var fcmToken = "none";
+
+  if(req.body.fcmToken != ""){
+    fcmToken = req.body.fcmToken;
+  }
 
   var params = {
     TableName: "Account",
@@ -30,7 +35,8 @@ account.post('/account/', unlencodedParser, function(req, res) {
       "createdtime": d.getTime(),
       "email": req.body.email,
       "password": req.body.password,
-      "name": req.body.name
+      "name": req.body.name,
+      "fcmToken": fcmToken
     }
   }
 

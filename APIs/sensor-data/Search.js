@@ -179,4 +179,36 @@ search.get('/sensors_owned/:ownerId', function(req, res) {
   }
 });
 
+// gets all ipcs of an owner
+search.get('/ipc/:ownerId', function(req, res) {
+  var params = {
+    TableName: "ipc",
+    FilterExpression: "#owner = :owner_id",
+    ExpressionAttributeNames: {
+      "#owner": "ownerId"
+    },
+    ExpressionAttributeValues: {
+      ":owner_id": req.params.ownerId
+    }
+  };
+  res.set('Access-Control-Allow-Origin', '*');
+
+  docClient.scan(params, onScan);
+
+  function onScan(err, data) {
+    if (err) {
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      // print all the movies
+      console.log("Scan succeeded.");
+      res.send(JSON.stringify(data, null, 2));
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);
+      }
+    }
+  }
+});
+
 module.exports = search;
