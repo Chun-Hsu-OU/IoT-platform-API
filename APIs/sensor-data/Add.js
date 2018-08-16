@@ -103,7 +103,7 @@ add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
   var checker = false;
   var plant = "";
   var description = "";
-  var nodeAddr = "";
+  var macAddr = "";
   var sensorTypes = [];
   var ownerId = "";
 
@@ -115,8 +115,8 @@ add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
     description = req.body.description;
   }
 
-  if(req.body.nodeAddr != ""){
-    nodeAddr = req.body.nodeAddr;
+  if(req.body.macAddr != ""){
+    macAddr = req.body.macAddr;
   }
 
   if(JSON.stringify(req.body.sensorTypes)  !== '[]'){
@@ -134,7 +134,7 @@ add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
       "areaId": req.body.areaId,
       "createdtime": d.getTime(),
       "name": req.body.name,
-      "nodeAddr": nodeAddr,
+      "macAddr": macAddr,
       "description": description,
       "plant": plant,
       "sensorTypes": sensorTypes,

@@ -134,13 +134,13 @@ update.post('/update/group/node', unlencodedParser, function(req, res) {
           "areaId": req.body.areaId,
           "groupId": req.body.groupId
       },
-      UpdateExpression: "set #group_name = :name, nodeAddr = :nodeAddr",
+      UpdateExpression: "set #group_name = :name, macAddr = :macAddr",
       ExpressionAttributeNames:{
           "#group_name": "name"
       },
       ExpressionAttributeValues:{
           ":name": req.body.name,
-          ":nodeAddr": req.body.nodeAddr
+          ":macAddr": req.body.macAddr
       },
       ReturnValues:"UPDATED_NEW"
     };
