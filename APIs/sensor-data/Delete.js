@@ -100,26 +100,4 @@ delete_item.post('/delete_item/sensor', unlencodedParser, function(req, res) {
   });
 });
 
-delete_item.post('/delete_item/ipc/:ipc_id', unlencodedParser, function(req, res) {
-  var params = {
-    TableName: "ipc",
-    Key: {
-      "ipcId": req.params.ipc_id
-    }
-  };
-
-  res.set('Access-Control-Allow-Origin', '*');
-  
-  console.log("Attempting a ipc delete...");
-  docClient.delete(params, function(err, data) {
-    if (err) {
-        console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
-    } else {
-        console.log("DeleteItem succeeded:", JSON.stringify(data, null, 2));
-        res.send("delete ipc id = " + req.params.ipc_id + " successfully")
-    }
-  });
-});
-
-
 module.exports = delete_item;

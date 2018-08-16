@@ -22,6 +22,26 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 add.post('/add/area', unlencodedParser, function(req, res) {
   var d = new Date();
   var checker = false;
+  var location = "";
+  var longitude = "";
+  var latitude = "";
+  var ip = "";
+
+  if(req.body.location != ""){
+    location = req.body.location;
+  }
+
+  if(req.body.longitude != ""){
+    longitude = req.body.longitude;
+  }
+
+  if(req.body.latitude != ""){
+    latitude = req.body.latitude;
+  }
+
+  if(req.body.ip != ""){
+    ip = req.body.ip;
+  }
 
   var params = {
     TableName: "Areas",
@@ -30,9 +50,10 @@ add.post('/add/area', unlencodedParser, function(req, res) {
       "ownerId": req.body.ownerId,
       "createdtime": d.getTime(),
       "name": req.body.name,
-      "location": req.body.location,
-      "longitude": req.body.longitude,
-      "latitude": req.body.latitude,
+      "location": location,
+      "longitude": longitude,
+      "latitude": latitude,
+      "ip": ip,
       "visible": 1
     }
   };
@@ -80,6 +101,31 @@ add.post('/add/area', unlencodedParser, function(req, res) {
 add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
   var d = new Date();
   var checker = false;
+  var plant = "";
+  var description = "";
+  var nodeAddr = "";
+  var sensorTypes = [];
+  var ownerId = "";
+
+  if(req.body.plant != ""){
+    plant = req.body.plant;
+  }
+
+  if(req.body.description != ""){
+    description = req.body.description;
+  }
+
+  if(req.body.nodeAddr != ""){
+    nodeAddr = req.body.nodeAddr;
+  }
+
+  if(JSON.stringify(req.body.sensorTypes)  !== '[]'){
+    sensorTypes = req.body.sensorTypes;
+  }
+
+  if(req.body.ownerId != ""){
+    ownerId = req.body.ownerId;
+  }
 
   var params = {
     TableName: "Sensor_Group",
@@ -88,8 +134,11 @@ add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
       "areaId": req.body.areaId,
       "createdtime": d.getTime(),
       "name": req.body.name,
-      "description": req.body.name,
-      "plant": req.body.plant,
+      "nodeAddr": nodeAddr,
+      "description": description,
+      "plant": plant,
+      "sensorTypes": sensorTypes,
+      "ownerId": ownerId,
       "visible": 1
     }
   };
@@ -214,58 +263,6 @@ add.post('/add/value', unlencodedParser, function(req, res) {
       res.send("Added sensing data of " + req.body.sensorId + " to DB");
     }
   });
-});
-
-add.post('/add/ipc', unlencodedParser, function(req, res) {
-  var checker = false;
-
-  var params = {
-    TableName: "ipc",
-    Item: {
-      "ipcId": uuid.v4(),
-      "ownerId": req.body.ownerId,
-      "name": req.body.name,
-      "ip": req.body.ip
-    }
-  };
-
-  var params_check = {
-    TableName: "ipc"
-  }
-
-  res.set('Access-Control-Allow-Origin', '*');
-  docClient.scan(params_check, onScan);
-
-  function onScan(err, data) {
-    if (err) {
-      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
-    } else {
-      console.log("Scan succeeded.");
-      data.Items.forEach(function(items) {
-        if (items.name == req.body.name && items.ip == req.body.ip) {
-          checker = true;
-        }
-      });
-      if (typeof data.LastEvaluatedKey != "undefined") {
-        console.log("Scanning for more...");
-        params.ExclusiveStartKey = data.LastEvaluatedKey;
-        docClient.scan(params, onScan);
-      }
-    }
-
-    if (checker == false) {
-      docClient.put(params, function(err, data) {
-        if (err) {
-          console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-        } else {
-          console.log("Added item:", JSON.stringify(data, null, 2));
-          res.send("Added " + req.body.name + " to ipc");
-        }
-      });
-    } else {
-      res.send("ipc name already in use, please try another one");
-    }
-  }
 });
 
 module.exports = add;

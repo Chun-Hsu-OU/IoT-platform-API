@@ -21,7 +21,6 @@ AWS.config.update({
 var docClient = new AWS.DynamoDB.DocumentClient();
 
 // Updates the chosen item in the "Area Table"
-
 update.post('/update/area', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Areas",
@@ -59,8 +58,41 @@ update.post('/update/area', unlencodedParser, function(req, res) {
   });
 });
 
-// Updates the chosen item in the "Sensor_Group Table"
+// Updates the ipc items in the "Area Table"
+update.post('/update/area/ipc', unlencodedParser, function(req, res) {
+    var params = {
+      TableName: "Areas",
+      Key: {
+          "ownerId": req.body.ownerId,
+          "areaId": req.body.areaId
+      },
+      UpdateExpression: "set #area_name = :name, #ipc_ip = :ip",
+      ExpressionAttributeNames:{
+          "#area_name": "name",
+          "#ipc_ip": "ip"
+      },
+      ExpressionAttributeValues:{
+          ":name": req.body.name,
+          ":ip": req.body.ip
+      },
+      ReturnValues:"UPDATED_NEW"
+    };
+  
+    res.set('Access-Control-Allow-Origin', '*');
+  
+    console.log("Updating the item...");
+    docClient.update(params, function(err, data) {
+        if (err) {
+            console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+            res.send("Error Updating Item");
+        } else {
+            console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+            res.send("UpdateItem succeeded");
+        }
+    });
+  });
 
+// Updates the chosen item in the "Sensor_Group Table"
 update.post('/update/group', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Sensor_Group",
@@ -94,8 +126,40 @@ update.post('/update/group', unlencodedParser, function(req, res) {
   });
 });
 
-// Updates the chosen item in the "Sensors Table"
+// Updates the LoRa p2p node info in the "Sensor_Group Table"
+update.post('/update/group/node', unlencodedParser, function(req, res) {
+    var params = {
+      TableName: "Sensor_Group",
+      Key: {
+          "areaId": req.body.areaId,
+          "groupId": req.body.groupId
+      },
+      UpdateExpression: "set #group_name = :name, nodeAddr = :nodeAddr",
+      ExpressionAttributeNames:{
+          "#group_name": "name"
+      },
+      ExpressionAttributeValues:{
+          ":name": req.body.name,
+          ":nodeAddr": req.body.nodeAddr
+      },
+      ReturnValues:"UPDATED_NEW"
+    };
+  
+    res.set('Access-Control-Allow-Origin', '*');
+  
+    console.log("Updating the item...");
+    docClient.update(params, function(err, data) {
+        if (err) {
+            console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+            res.send("Error Updating Item");
+        } else {
+            console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+            res.send("UpdateItem succeeded");
+        }
+    });
+});
 
+// Updates the chosen item in the "Sensors Table"
 update.post('/update/sensor', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Sensors",
@@ -127,38 +191,5 @@ update.post('/update/sensor', unlencodedParser, function(req, res) {
       }
   });
 });
-
-// Updates the chosen item in the "ipc Table"
-update.post('/update/ipc/:ipc_id', unlencodedParser, function(req, res) {
-    var params = {
-      TableName: "ipc",
-      Key: {
-          "ipcId": req.params.ipc_id
-      },
-      UpdateExpression: "set #ipc_name = :name, #ipc_ip = :ip",
-      ExpressionAttributeNames:{
-          "#ipc_name": "name",
-          "#ipc_ip": "ip"
-      },
-      ExpressionAttributeValues:{
-          ":name": req.body.name,
-          ":ip": req.body.ip
-      },
-      ReturnValues:"UPDATED_NEW"
-    };
-  
-    res.set('Access-Control-Allow-Origin', '*');
-  
-    console.log("Updating the item...");
-    docClient.update(params, function(err, data) {
-        if (err) {
-            console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
-            res.send("Error Updating Item");
-        } else {
-            console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
-            res.send("UpdateItem succeeded");
-        }
-    });
-  });
 
 module.exports = update;
