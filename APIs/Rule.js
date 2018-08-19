@@ -158,9 +158,9 @@ rule.post('/update/rule', unlencodedParser, function(req, res) {
             res.send("UpdateItem succeeded");
         }
     });
-  });
+});
 
-  rule.post('/delete_item/rule', unlencodedParser, function(req, res) {
+rule.post('/delete_item/rule', unlencodedParser, function(req, res) {
     var params = {
       TableName: "Rule",
       Key: {
@@ -185,6 +185,6 @@ rule.post('/update/rule', unlencodedParser, function(req, res) {
         res.send("Deletion succeed");
       }
     });
-  });
+});
 
   module.exports = rule;

@@ -152,7 +152,7 @@ account.get('/account/single/:uuid', unlencodedParser, function(req, res) {
       res.send("Error loading data");
     } else {
       try {
-        res.send({"name": data.Item.name, "password": data.Item.password});
+        res.send({"name": data.Item.name, "password": data.Item.password,"fcmToken": data.Item.fcmToken});
       } catch(err) {
         res.send("No Such Account");
       }
