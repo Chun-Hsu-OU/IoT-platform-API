@@ -104,7 +104,7 @@ search.get('/sensors_in_group/:groupId', function(req, res) {
   });
 });
 
-//gets single sensorId
+//gets single sensor newest data
 search.get('/sensors/:sensortype/:sensorid', function(req, res) {
   var d = new Date();
   var adjust = 3600*1000;
@@ -142,6 +142,44 @@ search.get('/sensors/:sensortype/:sensorid', function(req, res) {
       }
     }
   });
+});
+
+//use type and num search single sensorId
+search.get('/sensors/single/:macAddr/:sensorType/:num', function(req, res) {
+  var params = {
+    TableName: "Sensors",
+    FilterExpression: "#type = :type and #num = :num and #macAddr = :macAddr",
+    ProjectionExpression: "sensorId",
+    ExpressionAttributeNames: {
+      "#type": "sensorType",
+      "#num": "num",
+      "#macAddr": "macAddr"
+    },
+    ExpressionAttributeValues: {
+      ":type": req.params.sensorType,
+      ":num": req.params.num,
+      ":macAddr": req.params.macAddr
+    }
+  };
+
+  res.set('Access-Control-Allow-Origin', '*');
+
+  docClient.scan(params, onScan);
+
+  function onScan(err, data) {
+    if (err) {
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      // print all the movies
+      console.log("Scan succeeded.");
+      res.send(data.Items[0].sensorId);
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);
+      }
+    }
+  }
 });
 
 // gets all sensors with same owner

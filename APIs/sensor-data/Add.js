@@ -194,7 +194,9 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
       "groupId": req.body.groupId,
       "createdtime": d.getTime(),
       "name": req.body.name,
+      "macAddr": req.body.macAddr,
       "sensorType": req.body.sensorType,
+      "num": req.body.num,
       "ownerId": req.body.ownerId,
       "visible": 1
     }
