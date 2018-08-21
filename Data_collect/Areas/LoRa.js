@@ -32,13 +32,13 @@ client.on("message", function(topic, msg) {
       var sensor_data = JSON.parse(msg_temp)[0];
       for(let i=0; i < json.macAddr.length; i++){
           if(sensor_data.macAddr == json.macAddr[i]){
-            start(sensor_data.data, sensor_data.macAddr);
+            handle(sensor_data.data, sensor_data.macAddr);
           }
       }
     }
 });
 
-async function start(data, macAddr){
+async function handle(data, macAddr){
     var str = methods.hex2asc(data);
     var type = str.slice(0,1);
     var num = str.slice(1,2);
@@ -119,3 +119,5 @@ async function start(data, macAddr){
         console.log("err:"+str);
     }
 }
+
+module.exports.start = start;
