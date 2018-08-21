@@ -19,24 +19,26 @@ var option = {
 var topic = "#";
 var client = mqtt.connect('mqtt://' + doc.MQTT_server1.IP, option);
 
-//mqtt
-client.on("connect", function() {
-    console.log("Subscribing TOPIC: " + topic);
-    client.subscribe(topic);
-});
+var start = function() {
+    //mqtt
+    client.on("connect", function() {
+        console.log("Subscribing TOPIC: " + topic);
+        client.subscribe(topic);
+    });
 
-client.on("message", function(topic, msg) {
-    var msg_temp = msg.toString();
+    client.on("message", function(topic, msg) {
+        var msg_temp = msg.toString();
 
-    if (msg_temp.startsWith("[{")) {
-      var sensor_data = JSON.parse(msg_temp)[0];
-      for(let i=0; i < json.macAddr.length; i++){
-          if(sensor_data.macAddr == json.macAddr[i]){
-            handle(sensor_data.data, sensor_data.macAddr);
-          }
-      }
-    }
-});
+        if (msg_temp.startsWith("[{")) {
+        var sensor_data = JSON.parse(msg_temp)[0];
+        for(let i=0; i < json.macAddr.length; i++){
+            if(sensor_data.macAddr == json.macAddr[i]){
+                handle(sensor_data.data, sensor_data.macAddr);
+            }
+        }
+        }
+    });
+}
 
 async function handle(data, macAddr){
     var str = methods.hex2asc(data);
