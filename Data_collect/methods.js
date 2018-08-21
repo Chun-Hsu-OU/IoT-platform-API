@@ -3,7 +3,7 @@ var rp = require('request-promise');
 var save_data = function(type, value, id) {
   var options = {
     method: 'POST',
-    uri: 'http://ec2-13-125-205-170.ap-northeast-2.compute.amazonaws.com:3000/api/add/value',
+    uri: 'http://ec2-13-125-253-199.ap-northeast-2.compute.amazonaws.com:3000/api/add/value',
     //uri: 'http://localhost:3000/api/add/value',
     body: {
       'sensorType': type,

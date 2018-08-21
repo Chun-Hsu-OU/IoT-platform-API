@@ -14,13 +14,13 @@ try {
 
 var option = {
   port: doc.MQTT_server1.port,
-  clientId: doc.MQTT_server1.HSNL_clientID,
+  clientId: "nthu_roof",
   username: doc.MQTT_server1.HSNL_user,
   password: doc.MQTT_server1.HSNL_password
 };
 
-var topic = doc.MQTT_server1.topic;
-var client = mqtt.connect('mqtt://' + doc.MQTT_server1.IP, option);
+var topic = "#";
+var client = mqtt.connect('mqtt://' + doc.MQTT_server2.IP, option);
 
 var start = function() {
   client.on("connect", function() {
