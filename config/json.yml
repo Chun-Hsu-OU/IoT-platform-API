@@ -1,0 +1,24 @@
+macAddr:
+  # tip: remove http to make production-grade
+  - "00000000050101ee"
+  - "0000000005010821"
+  - "0000000005010328"
+  - "00000000050107d2"
+  - "000000000501086d"
+  - "0000000005010329"
+
+sensorTypes:
+  a_tem: "AIR_TEMPERATURE"
+  a_hum: "AIR_HUMIDITY"
+  co2: "CO2"
+  avg_ws: "AVG_WIND_SPEED"
+  high_ws: "HIGHEST_WIND_SPEED"
+  batv: "BATTERY_VOLTAGE"
+  light: "LIGHT_INTENSITY"
+  rain_pd: "RAINFALL_PER_DAY"
+  rain_ph: "RAINFALL_PER_HOUR"
+  real_ws: "REALTIME_WIND_SPEED"
+  s_ec: "SOIL_EC"
+  s_hum: "SOIL_HUMIDITY"
+  s_tem: "SOIL_TEMPERATURE"
+  wd: "WIND_DIRECTION"

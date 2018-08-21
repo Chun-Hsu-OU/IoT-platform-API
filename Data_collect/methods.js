@@ -30,5 +30,25 @@ var hex2asc = function(hexx) {
     return str;
 }
 
+function searchId(macAddr, type, num) {
+  var options = {
+      method: 'GET',
+      uri: 'http://ec2-13-125-253-199.ap-northeast-2.compute.amazonaws.com:3000/api/sensors/single/' +macAddr+ '/'+ type+ '/'+ num,
+      //uri: 'http://localhost:3000/api/add/value',
+
+      json: true
+  };
+
+  return rp(options)
+  .then(function(response) {
+      // console.log(response);
+      return response;
+  })
+  .catch(function(err) {
+      console.log(err);
+  });
+}
+
 module.exports.save_data = save_data;
 module.exports.hex2asc = hex2asc;
+module.exports.searchId = searchId;
