@@ -6,8 +6,8 @@ var mqtt = require("mqtt");
 var methods = require('../methods');
 
 // file为文件所在路径
-var json = YAML.parse(fs.readFileSync(path.join(__dirname, '../../config') + '/json.yml')).toString();
-var doc = YAML.parse(fs.readFileSync(path.join(__dirname, '../../config') + '/secrets.yml')).toString();
+var json = YAML.parse(fs.readFileSync(path.join(__dirname, '../../config') + '/json.yml').toString());
+var doc = YAML.parse(fs.readFileSync(path.join(__dirname, '../../config') + '/secrets.yml').toString());
 
 var option = {
     port: doc.MQTT_server1.port,
