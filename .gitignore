@@ -1,6 +1,5 @@
 .DS_Store
 config/secrets.yml
-config/json.yml
 node_modules/
 package-lock.json
 Data_collect/mqtt_test.js
