@@ -11,7 +11,7 @@ var doc = YAML.parse(fs.readFileSync(path.join(__dirname, '../../config') + '/se
 
 var option = {
     port: doc.MQTT_server1.port,
-    clientId: "Lab_test",
+    clientId: "Hualien_7d2",
     username: doc.MQTT_server1.HSNL_user,
     password: doc.MQTT_server1.HSNL_password
 };
