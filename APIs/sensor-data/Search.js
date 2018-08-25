@@ -22,7 +22,7 @@ search.get('/area/:ownerId', function(req, res, next) {
 
   var params = {
     TableName: "Areas",
-    KeyConditionExpression: "#owner = :owner_id and visible = 1",
+    KeyConditionExpression: "#owner = :owner_id",
     ExpressionAttributeNames: {
       "#owner": "ownerId"
     },
@@ -52,7 +52,7 @@ search.get('/area/:ownerId', function(req, res, next) {
 search.get('/sensorgroup_in_area/:areaId', function(req, res) {
   var params = {
     TableName: "Sensor_Group",
-    KeyConditionExpression: "#area = :area_id and visible = 1",
+    KeyConditionExpression: "#area = :area_id",
     ExpressionAttributeNames: {
       "#area": "areaId"
     },
@@ -80,7 +80,7 @@ search.get('/sensorgroup_in_area/:areaId', function(req, res) {
 search.get('/sensors_in_group/:groupId', function(req, res) {
   var params = {
     TableName: "Sensors",
-    KeyConditionExpression: "#group = :group_id and visible = 1",
+    KeyConditionExpression: "#group = :group_id",
     ExpressionAttributeNames: {
       "#group": "groupId"
     },
@@ -186,7 +186,7 @@ search.get('/sensors/single/:macAddr/:sensorType/:num', function(req, res) {
 search.get('/sensors_owned/:ownerId', function(req, res) {
   var params = {
     TableName: "Sensors",
-    FilterExpression: "#owner = :owner_id and visible = 1",
+    FilterExpression: "#owner = :owner_id",
     ExpressionAttributeNames: {
       "#owner": "ownerId"
     },
