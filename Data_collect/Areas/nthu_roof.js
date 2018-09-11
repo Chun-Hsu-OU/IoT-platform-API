@@ -35,22 +35,20 @@ var start = function() {
       var sensor_data = JSON.parse(msg_temp);
 
       if (sensor_data['macAddr'] == '1') {
-        methods.save_data('AIR_TEMPERATURE', sensor_data.Airtemp, '30dd6480-4d53-11e8-b0d8-83454b04a8a4');
-        methods.save_data('AIR_HUMIDITY', sensor_data.Airhum, '428a3be0-4d53-11e8-b0d8-83454b04a8a4');
-      }
-      if (sensor_data['macAddr'] == '1') {
-        methods.save_data('WIND_DIRECTION', sensor_data.Winddir, '65c78900-4d53-11e8-b0d8-83454b04a8a4');
-        methods.save_data('AVG_WIND_SPEED', sensor_data.Windspeed, '835dff80-4d53-11e8-b0d8-83454b04a8a4');
-      }
-      if (sensor_data['macAddr'] == '1') {
-        methods.save_data('SOIL_TEMPERATURE', sensor_data.Soiltemp, '59be7b00-4d53-11e8-b0d8-83454b04a8a4');
-        methods.save_data('SOIL_HUMIDITY', sensor_data.Soilhum, '50c34940-4d53-11e8-b0d8-83454b04a8a4');
-      }
-      if (sensor_data['macAddr'] == '1') {
-        methods.save_data('LIGHT_INTENSITY', sensor_data.Lightlux, '8d741720-4d53-11e8-b0d8-83454b04a8a4');
-      }
-      if (sensor_data['macAddr'] == '1') {
-        methods.save_data('BATTERY_VOLTAGE', sensor_data.Batteryvoltage, '98c3c030-4d53-11e8-b0d8-83454b04a8a4');
+        if(sensor_data['sensortype'] == 'Air'){
+          methods.save_data('AIR_TEMPERATURE', sensor_data.Airtemp, '30dd6480-4d53-11e8-b0d8-83454b04a8a4');
+          methods.save_data('AIR_HUMIDITY', sensor_data.Airhum, '428a3be0-4d53-11e8-b0d8-83454b04a8a4');
+        }else if(sensor_data['sensortype'] == 'Win'){
+          methods.save_data('WIND_DIRECTION', sensor_data.Winddir, '65c78900-4d53-11e8-b0d8-83454b04a8a4');
+          methods.save_data('AVG_WIND_SPEED', sensor_data.Windspeed, '835dff80-4d53-11e8-b0d8-83454b04a8a4');
+        }else if(sensor_data['sensortype'] == 'Soil'){
+          methods.save_data('SOIL_TEMPERATURE', sensor_data.Soiltemp, '59be7b00-4d53-11e8-b0d8-83454b04a8a4');
+          methods.save_data('SOIL_HUMIDITY', sensor_data.Soilhum, '50c34940-4d53-11e8-b0d8-83454b04a8a4');
+        }else if(sensor_data['sensortype'] == 'Light'){
+          methods.save_data('LIGHT_INTENSITY', sensor_data.Lightlux, '8d741720-4d53-11e8-b0d8-83454b04a8a4');
+        }else if(sensor_data['sensortype'] == 'Battery'){
+          methods.save_data('BATTERY_VOLTAGE', sensor_data.Batteryvoltage, '98c3c030-4d53-11e8-b0d8-83454b04a8a4');
+        } 
       }
     }
   });
