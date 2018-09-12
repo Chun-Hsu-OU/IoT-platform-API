@@ -124,7 +124,7 @@ async function handle(data, macAddr){
             methods.save_data(json.sensorTypes.wd, value ,id);
         }else if(num == "2"){   //風速
             var digit = parseFloat(str.slice(2,3));
-            var value = str.slice(11 - digit);
+            var value = parseFloat(str.slice(11 - digit)) / 10;
             var id = await methods.searchId(macAddr, json.sensorTypes.real_ws, "1");
             methods.save_data(json.sensorTypes.real_ws, value ,id);
         }
