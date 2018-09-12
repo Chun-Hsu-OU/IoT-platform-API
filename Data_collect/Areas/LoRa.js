@@ -117,6 +117,17 @@ async function handle(data, macAddr){
         console.log("Soil_EC id: " + id);
         console.log("--------------------------------");
         methods.save_data(json.sensorTypes.s_ec, value ,id);
+    }else if(type == "W"){
+        if(num == "1"){
+            var value = str.slice(10);
+            var id = await methods.searchId(macAddr, json.sensorTypes.wd, 1);
+            methods.save_data(json.sensorTypes.wd, value ,id);
+        }else if(num == "2"){
+            var digit = parseFloat(str.slice(2,3));
+            var value = str.slice(11 - digit);
+            var id = await methods.searchId(macAddr, json.sensorTypes.real_ws, 1);
+            methods.save_data(json.sensorTypes.real_ws, value ,id);
+        }
     }else{
         console.log("err:"+str);
     }
