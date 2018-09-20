@@ -52,12 +52,16 @@ async function handle(data, macAddr){
         console.log("num:" + num);
         console.log("tem_data:" + tem_data);
         console.log("hum_data:" + hum_data);
-        var tem_id = await methods.searchId(macAddr, json.sensorTypes.a_tem, num);
-        var hum_id = await methods.searchId(macAddr, json.sensorTypes.a_hum, num);
-        console.log("air temp id: " + tem_id);
-        console.log("air humi id: " + hum_id);
-        methods.save_data(json.sensorTypes.a_tem, tem_data, tem_id);
-        methods.save_data(json.sensorTypes.a_hum, hum_data, hum_id);
+        if(tem_data>=0 && tem_data<=100){
+            var tem_id = await methods.searchId(macAddr, json.sensorTypes.a_tem, num);
+            console.log("air temp id: " + tem_id);
+            methods.save_data(json.sensorTypes.a_tem, tem_data, tem_id);
+        }
+        if(hum_data>=0 && hum_data<=100){
+            var hum_id = await methods.searchId(macAddr, json.sensorTypes.a_hum, num);
+            console.log("air humi id: " + hum_id);
+            methods.save_data(json.sensorTypes.a_hum, hum_data, hum_id);
+        }    
     }else if(type == "F"){
         var tem_data = parseFloat(str.slice(2,6)) / 100;
         var hum_data = parseFloat(str.slice(6)) / 100;
@@ -79,22 +83,27 @@ async function handle(data, macAddr){
         console.log("num:" + num);
         console.log("tem_data:" + tem_data);
         console.log("hum_data:" + hum_data);
-        var tem_id = await methods.searchId(macAddr, json.sensorTypes.s_tem, num);
-        var hum_id = await methods.searchId(macAddr, json.sensorTypes.s_hum, num);
-        console.log("soil temp id: " + tem_id);
-        console.log("soil humi id: " + hum_id);
-        console.log("--------------------------------");
-        methods.save_data(json.sensorTypes.s_tem, tem_data ,tem_id);
-        methods.save_data(json.sensorTypes.s_hum, hum_data ,hum_id);
+        if(tem_data>=0 && tem_data<=100){
+            var tem_id = await methods.searchId(macAddr, json.sensorTypes.s_tem, num);
+            console.log("soil temp id: " + tem_id);
+            methods.save_data(json.sensorTypes.s_tem, tem_data ,tem_id);
+        }
+        if(hum_data>=0 && hum_data<=100){
+            var hum_id = await methods.searchId(macAddr, json.sensorTypes.s_hum, num);
+            console.log("soil humi id: " + hum_id);
+            methods.save_data(json.sensorTypes.s_hum, hum_data ,hum_id);
+        }
     }else if(type == "B"){
         var voltage_data = parseFloat(str.slice(6));
         console.log("type:" + type);
         console.log("num:" + num);
         console.log("voltage_data:" + voltage_data);
-        var id = await methods.searchId(macAddr, json.sensorTypes.batv, num);
-        console.log("battery id: " + id);
-        console.log("--------------------------------");
-        methods.save_data(json.sensorTypes.batv, voltage_data ,id);
+        if(voltage_data>=7 && voltage_data<=13){
+            var id = await methods.searchId(macAddr, json.sensorTypes.batv, num);
+            console.log("battery id: " + id);
+            console.log("--------------------------------");
+            methods.save_data(json.sensorTypes.batv, voltage_data ,id);
+        }
     }else if(type == "L"){
         var digit = parseFloat(str.slice(2,3));
         var value = str.slice(11 - digit);
@@ -125,8 +134,10 @@ async function handle(data, macAddr){
         }else if(num == "2"){   //風速
             var digit = parseFloat(str.slice(2,3));
             var value = parseFloat(str.slice(11 - digit)) / 10;
-            var id = await methods.searchId(macAddr, json.sensorTypes.real_ws, "1");
-            methods.save_data(json.sensorTypes.real_ws, value ,id);
+            if(value>=0 && value<=10){
+                var id = await methods.searchId(macAddr, json.sensorTypes.real_ws, "1");
+                methods.save_data(json.sensorTypes.real_ws, value ,id);
+            }
         }
     }else{
         console.log("err:"+str);
