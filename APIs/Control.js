@@ -193,7 +193,7 @@ control.post('/control/rule/length', unlencodedParser, function(req, res) {
     },
     UpdateExpression: "set #thing = :len",
     ExpressionAttributeNames:{
-        "#thing": "rules"
+        "#thing": "rules_num"
     },
     ExpressionAttributeValues:{
         ":len": req.body.status
