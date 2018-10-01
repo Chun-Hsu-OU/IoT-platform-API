@@ -21,7 +21,7 @@ AWS.config.update({
 var docClient = new AWS.DynamoDB.DocumentClient();
 
 // Add a new log to the DynamoDB
-agri_log.post('/add/control', unlencodedParser, function(req, res) {
+control.post('/add/control', unlencodedParser, function(req, res) {
   var d = new Date();
   var time = d.getTime();
   var macAddr = "";
