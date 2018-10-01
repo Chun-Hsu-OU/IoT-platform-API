@@ -20,10 +20,10 @@ AWS.config.update({
 
 var docClient = new AWS.DynamoDB.DocumentClient();
 
-// Add a new log to the DynamoDB
+// Add a new controller to the DynamoDB
 control.post('/add/control', unlencodedParser, function(req, res) {
   var d = new Date();
-  var time = d.getTime();
+  var checker = false;
 
   var params = {
     TableName: "Controller",
@@ -38,18 +38,49 @@ control.post('/add/control', unlencodedParser, function(req, res) {
       "macAddr": req.body.macAddr,
       "protocol": req.body.protocol,
       "setting": req.body.setting,
-      "createdtime": time,
+      "createdtime": d.getTime(),
       "visible": 1
     }
-  };
-  docClient.put(params, function(err, data) {
+  }
+
+  // Checks if the Conditione has been registered before
+  var params_check = {
+    TableName: "Controller"
+  }
+
+  docClient.scan(params_check, onScan);
+
+  function onScan(err, data) {
     if (err) {
-      console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
     } else {
-      console.log("Added item:", JSON.stringify(data, null, 2));
-      res.send("Added Controller in timestamp " + time);
+      console.log("Scan succeeded.");
+      data.Items.forEach(function(Controller) {
+        if (Controller.name == req.body.name && Controller.visible == 1) {
+          checker = true;
+        }
+      });
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params_check, onScan);
+      }
     }
-  });
+
+    if (checker == false) {
+      docClient.put(params, function(err, data) {
+        if (err) {
+          console.error("Unable to register controller", req.body.name, ". Error JSON:", JSON.stringify(err, null, 2));
+          res.send("Unable to register controller", req.body.name);
+        } else {
+          console.log("PutItem succeeded:", req.body.name);
+          res.send("Register succeeded");
+        }
+      });
+    } else {
+      res.send("Controller Name "+ req.body.name +" already in use");
+    }
+  }
 });
 
 control.post('/delete_item/control', unlencodedParser, function(req, res) {
