@@ -24,11 +24,6 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 control.post('/add/control', unlencodedParser, function(req, res) {
   var d = new Date();
   var time = d.getTime();
-  var macAddr = "";
-
-  if(req.body.macAddr != ""){
-    location = req.body.macAddr;
-  }
 
   var params = {
     TableName: "Controller",
@@ -40,7 +35,7 @@ control.post('/add/control', unlencodedParser, function(req, res) {
       "power": "OFF",
       "clock": "OFF",
       "auto": "OFF",
-      "macAddr": macAddr,
+      "macAddr": req.body.macAddr,
       "protocol": req.body.protocol,
       "setting": req.body.setting,
       "createdtime": time,
@@ -53,6 +48,31 @@ control.post('/add/control', unlencodedParser, function(req, res) {
     } else {
       console.log("Added item:", JSON.stringify(data, null, 2));
       res.send("Added Controller in timestamp " + time);
+    }
+  });
+});
+
+control.post('/delete_item/control', unlencodedParser, function(req, res) {
+  var params = {
+    TableName: "Controller",
+    Key: {
+      "controllerId": req.body.controllerId
+    },
+    UpdateExpression: "set visible = :val",
+    ExpressionAttributeValues: {
+      ":val": 0
+    },
+    ReturnValues: "UPDATED_NEW"
+  };
+
+  console.log("Updating the item...");
+  docClient.update(params, function(err, data) {
+    if (err) {
+      console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+      res.send("Error deleting from DB");
+    } else {
+      console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+      res.send("Deletion succeed");
     }
   });
 });
