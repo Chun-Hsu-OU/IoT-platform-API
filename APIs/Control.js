@@ -20,6 +20,43 @@ AWS.config.update({
 
 var docClient = new AWS.DynamoDB.DocumentClient();
 
+// Add a new log to the DynamoDB
+agri_log.post('/add/control', unlencodedParser, function(req, res) {
+  var d = new Date();
+  var time = d.getTime();
+  var macAddr = "";
+
+  if(req.body.macAddr != ""){
+    location = req.body.macAddr;
+  }
+
+  var params = {
+    TableName: "Controller",
+    Item: {
+      "controllerId": uuid.v4(),
+      "ownerId": req.body.ownerId,
+      "groupId": req.body.groupId,
+      "name": req.body.name,
+      "power": "OFF",
+      "clock": "OFF",
+      "auto": "OFF",
+      "macAddr": macAddr,
+      "protocol": req.body.protocol,
+      "setting": req.body.setting,
+      "createdtime": time,
+      "visible": 1
+    }
+  };
+  docClient.put(params, function(err, data) {
+    if (err) {
+      console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      console.log("Added item:", JSON.stringify(data, null, 2));
+      res.send("Added Controller in timestamp " + time);
+    }
+  });
+});
+
 // Gets the certain controller
 control.get('/control/single/:controllerId', function(req, res) {
   var params = {
