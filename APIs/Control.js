@@ -30,6 +30,7 @@ control.post('/add/control', unlencodedParser, function(req, res) {
     Item: {
       "controllerId": uuid.v4(),
       "ownerId": req.body.ownerId,
+      "areaId": req.body.areaId,
       "groupId": req.body.groupId,
       "name": req.body.name,
       "power": "OFF",
