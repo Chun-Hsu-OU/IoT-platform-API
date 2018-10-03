@@ -23,18 +23,20 @@ search.get('/area/:ownerId', function(req, res, next) {
   var params = {
     TableName: "Areas",
     KeyConditionExpression: "#owner = :owner_id",
+    FilterExpression: "#visible = :val",
     ExpressionAttributeNames: {
-      "#owner": "ownerId"
+      "#owner": "ownerId",
+      "#visible": "visible"
     },
     ExpressionAttributeValues: {
-      ":owner_id": req.params.ownerId
+      ":owner_id": req.params.ownerId,
+      ":val": 1
     }
   };
 
   res.set('Access-Control-Allow-Origin', '*');
 
   docClient.query(params, function(err, data) {
-    var exist = { "Items": [] };
     if (err) {
       console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
       res.send("Unable to Query. Error:", JSON.stringify(err, null, 2));
@@ -43,14 +45,7 @@ search.get('/area/:ownerId', function(req, res, next) {
       data.Items.sort(function(a, b) {
         return parseFloat(a.createdtime) - parseFloat(b.createdtime);
       });
-      data.Items.forEach(function(item) {
-        if (item.visible == 1) {
-          exist.Items.push(item);
-        }
-      });
-      exist.Count = exist.Items.length;
-      exist.ScannedCount = exist.Items.length;
-      res.write(JSON.stringify(exist, null, 2));
+      res.write(JSON.stringify(data, null, 2));
       res.end();
     }
   });
@@ -58,15 +53,17 @@ search.get('/area/:ownerId', function(req, res, next) {
 
 // gets all sensorgroups in an area
 search.get('/sensorgroup_in_area/:areaId', function(req, res) {
-  var exist = { "Items": [] };
   var params = {
     TableName: "Sensor_Group",
     KeyConditionExpression: "#area = :area_id",
+    FilterExpression: "#visible = :val",
     ExpressionAttributeNames: {
-      "#area": "areaId"
+      "#area": "areaId",
+      "#visible": "visible"
     },
     ExpressionAttributeValues: {
-      ":area_id": req.params.areaId
+      ":area_id": req.params.areaId,
+      ":val": 1
     }
   };
   res.set('Access-Control-Allow-Origin', '*');
@@ -80,29 +77,24 @@ search.get('/sensorgroup_in_area/:areaId', function(req, res) {
       data.Items.sort(function(a, b) {
         return parseFloat(a.createdtime) - parseFloat(b.createdtime);
       });
-      data.Items.forEach(function(item) {
-        if (item.visible == 1) {
-          exist.Items.push(item);
-        }
-      });
-      exist.Count = exist.Items.length;
-      exist.ScannedCount = exist.Items.length;
-      res.send(JSON.stringify(exist, null, 2));
+      res.send(JSON.stringify(data, null, 2));
     }
   });
 });
 
 // gets all sensors in sensorgroup
 search.get('/sensors_in_group/:groupId', function(req, res) {
-  var exist = { "Items": [] };
   var params = {
     TableName: "Sensors",
     KeyConditionExpression: "#group = :group_id",
+    FilterExpression: "#visible = :val",
     ExpressionAttributeNames: {
-      "#group": "groupId"
+      "#group": "groupId",
+      "#visible": "visible"
     },
     ExpressionAttributeValues: {
-      ":group_id": req.params.groupId
+      ":group_id": req.params.groupId,
+      ":val": 1
     }
   };
   res.set('Access-Control-Allow-Origin', '*');
@@ -116,14 +108,7 @@ search.get('/sensors_in_group/:groupId', function(req, res) {
       data.Items.sort(function(a, b) {
         return parseFloat(a.createdtime) - parseFloat(b.createdtime);
       });
-      data.Items.forEach(function(item) {
-        if (item.visible == 1) {
-          exist.Items.push(item);
-        }
-      });
-      exist.Count = exist.Items.length;
-      exist.ScannedCount = exist.Items.length;
-      res.send(JSON.stringify(exist, null, 2));
+      res.send(JSON.stringify(data, null, 2));
     }
   });
 });
@@ -208,15 +193,16 @@ search.get('/sensors/single/:macAddr/:sensorType/:num', function(req, res) {
 
 // gets all sensors with same owner
 search.get('/sensors_owned/:ownerId', function(req, res) {
-  var exist = { "Items": [] };
   var params = {
     TableName: "Sensors",
-    FilterExpression: "#owner = :owner_id",
+    FilterExpression: "#owner = :owner_id and #visible = :val",
     ExpressionAttributeNames: {
-      "#owner": "ownerId"
+      "#owner": "ownerId",
+      "#visible": "visible"
     },
     ExpressionAttributeValues: {
-      ":owner_id": req.params.ownerId
+      ":owner_id": req.params.ownerId,
+      ":val": 1
     }
   };
   res.set('Access-Control-Allow-Origin', '*');
@@ -232,14 +218,7 @@ search.get('/sensors_owned/:ownerId', function(req, res) {
       data.Items.sort(function(a, b) {
         return parseFloat(a.createdtime) - parseFloat(b.createdtime);
       });
-      data.Items.forEach(function(item) {
-        if (item.visible == 1) {
-          exist.Items.push(item);
-        }
-      });
-      exist.Count = exist.Items.length;
-      exist.ScannedCount = exist.Items.length;
-      res.send(JSON.stringify(exist, null, 2));
+      res.send(JSON.stringify(data, null, 2));
       if (typeof data.LastEvaluatedKey != "undefined") {
         console.log("Scanning for more...");
         params.ExclusiveStartKey = data.LastEvaluatedKey;

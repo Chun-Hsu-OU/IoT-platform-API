@@ -54,12 +54,14 @@ agri_log.post('/add/log', unlencodedParser, function(req, res) {
 agri_log.get('/search/log/:feature/:value', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Agri_log",
-    FilterExpression: "#feature = :feature_description",
+    FilterExpression: "#feature = :feature_description and #visible = :val",
     ExpressionAttributeNames: {
-      "#feature": req.params.feature
+      "#feature": req.params.feature,
+      "#visible": "visible"
     },
     ExpressionAttributeValues: {
-      ":feature_description": req.params.value
+      ":feature_description": req.params.value,
+      ":val": 1
     }
   };
 

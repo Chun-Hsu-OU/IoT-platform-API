@@ -140,12 +140,14 @@ control.get('/control/single/:controllerId', function(req, res) {
 control.get('/search/control/group/:groupId', function(req, res) {
   var params = {
     TableName: "Controller",
-    FilterExpression: "#group = :group_id",
+    FilterExpression: "#group = :group_id and #visible = :val",
     ExpressionAttributeNames: {
-      "#group": "groupId"
+      "#group": "groupId",
+      "#visible": "visible"
     },
     ExpressionAttributeValues: {
-      ":group_id": req.params.groupId
+      ":group_id": req.params.groupId,
+      ":val": 1
     }
   };
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -176,12 +178,14 @@ control.get('/search/control/group/:groupId', function(req, res) {
 control.get('/search/control/owner/:ownerId', function(req, res) {
   var params = {
     TableName: "Controller",
-    FilterExpression: "#owner = :owner_id",
+    FilterExpression: "#owner = :owner_id and #visible = :val",
     ExpressionAttributeNames: {
-      "#owner": "ownerId"
+      "#owner": "ownerId",
+      "#visible": "visible"
     },
     ExpressionAttributeValues: {
-      ":owner_id": req.params.ownerId
+      ":owner_id": req.params.ownerId,
+      ":val": 1
     }
   };
   res.setHeader('Access-Control-Allow-Origin', '*');
