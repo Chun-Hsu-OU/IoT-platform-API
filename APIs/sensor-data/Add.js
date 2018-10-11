@@ -236,7 +236,7 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
         }
       });
     } else {
-      res.send("Sensor name already in use, please try another one");
+      res.send(false);
     }
   }
 });
