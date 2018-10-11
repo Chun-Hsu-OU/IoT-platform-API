@@ -135,16 +135,16 @@ control.get('/control/single/:controllerId', function(req, res) {
 });
 
 // Gets all the controllers that a sensor hub has
-control.get('/search/control/group/:groupId', function(req, res) {
+control.get('/search/control/area/:areaId', function(req, res) {
   var params = {
     TableName: "Controller",
-    FilterExpression: "#group = :group_id and #visible = :val",
+    FilterExpression: "#area = :areaId and #visible = :val",
     ExpressionAttributeNames: {
-      "#group": "groupId",
+      "#area": "areaId",
       "#visible": "visible"
     },
     ExpressionAttributeValues: {
-      ":group_id": req.params.groupId,
+      ":areaId": req.params.areaId,
       ":val": 1
     }
   };
