@@ -100,32 +100,6 @@ add.post('/add/area', unlencodedParser, function(req, res) {
 // adds a sensorGroup to an area
 add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
   var d = new Date();
-  var checker = false;
-  var plant = "";
-  var description = "";
-  var macAddr = "";
-  var sensorTypes = [];
-  var ownerId = "";
-
-  if(req.body.plant != ""){
-    plant = req.body.plant;
-  }
-
-  if(req.body.description != ""){
-    description = req.body.description;
-  }
-
-  if(req.body.macAddr != ""){
-    macAddr = req.body.macAddr;
-  }
-
-  if(JSON.stringify(req.body.sensorTypes)  !== '[]'){
-    sensorTypes = req.body.sensorTypes;
-  }
-
-  if(req.body.ownerId != ""){
-    ownerId = req.body.ownerId;
-  }
 
   var params = {
     TableName: "Sensor_Group",
@@ -134,52 +108,24 @@ add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
       "areaId": req.body.areaId,
       "createdtime": d.getTime(),
       "name": req.body.name,
-      "macAddr": macAddr,
-      "description": description,
-      "plant": plant,
-      "sensorTypes": sensorTypes,
-      "ownerId": ownerId,
+      "macAddr": req.body.macAddr,
+      "description": req.body.description,
+      "plant": req.body.plant,
+      "sensorTypes": req.body.sensorTypes,
+      "ownerId": req.body.ownerId,
       "visible": 1
     }
   };
 
-  var params_check = {
-    TableName: "Sensor_Group"
-  }
-
   res.set('Access-Control-Allow-Origin', '*');
-  docClient.scan(params_check, onScan);
-
-  function onScan(err, data) {
+  docClient.put(params, function(err, data) {
     if (err) {
-      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+      console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
     } else {
-      console.log("Scan succeeded.");
-      data.Items.forEach(function(items) {
-        if (items.name == req.body.name && items.visible == 1) {
-          checker = true;
-        }
-      });
-      if (typeof data.LastEvaluatedKey != "undefined") {
-        console.log("Scanning for more...");
-        params.ExclusiveStartKey = data.LastEvaluatedKey;
-        docClient.scan(params, onScan);
-      }
+      console.log("Added item:", JSON.stringify(data, null, 2));
+      res.send("Added " + req.body.name + " to area");
     }
-
-    if (checker == false) {
-      docClient.put(params, function(err, data) {
-        if (err) {
-          console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-        } else {
-          console.log("Added item:", JSON.stringify(data, null, 2));
-          res.send("Added " + req.body.name + " to area");
-        }
-      });
-    } else {
-      res.send("Sensor Group name already in use, please try another one");
-    }
-  }
+  });
 });
 
 // adds a sensor to a sensor group
@@ -202,6 +148,7 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
     }
   };
 
+  res.set('Access-Control-Allow-Origin', '*');
   docClient.put(params, function(err, data) {
     if (err) {
       console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
