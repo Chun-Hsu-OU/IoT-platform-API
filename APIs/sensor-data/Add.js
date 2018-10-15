@@ -202,43 +202,52 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
     }
   };
 
-  var params_check = {
-    TableName: "Sensors"
-  }
-
-  res.set('Access-Control-Allow-Origin', '*');
-  docClient.scan(params_check, onScan);
-
-  function onScan(err, data) {
+  docClient.put(params, function(err, data) {
     if (err) {
-      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+      console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
     } else {
-      console.log("Scan succeeded.");
-      data.Items.forEach(function(items) {
-        if (items.name == req.body.name && items.visible == 1) {
-          checker = true;
-        }
-      });
-      if (typeof data.LastEvaluatedKey != "undefined") {
-        console.log("Scanning for more...");
-        params.ExclusiveStartKey = data.LastEvaluatedKey;
-        docClient.scan(params, onScan);
-      }
+      console.log("Added item:", JSON.stringify(data, null, 2));
+      res.send("Added " + req.body.name + " to sensor group");
     }
+  });
 
-    if (checker == false) {
-      docClient.put(params, function(err, data) {
-        if (err) {
-          console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-        } else {
-          console.log("Added item:", JSON.stringify(data, null, 2));
-          res.send("Added " + req.body.name + " to sensor group");
-        }
-      });
-    } else {
-      res.send(false);
-    }
-  }
+  // var params_check = {
+  //   TableName: "Sensors"
+  // }
+
+  // res.set('Access-Control-Allow-Origin', '*');
+  // docClient.scan(params_check, onScan);
+
+  // function onScan(err, data) {
+  //   if (err) {
+  //     console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+  //   } else {
+  //     console.log("Scan succeeded.");
+  //     data.Items.forEach(function(items) {
+  //       if (items.name == req.body.name && items.visible == 1) {
+  //         checker = true;
+  //       }
+  //     });
+  //     if (typeof data.LastEvaluatedKey != "undefined") {
+  //       console.log("Scanning for more...");
+  //       params.ExclusiveStartKey = data.LastEvaluatedKey;
+  //       docClient.scan(params, onScan);
+  //     }
+  //   }
+
+  //   if (checker == false) {
+  //     docClient.put(params, function(err, data) {
+  //       if (err) {
+  //         console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+  //       } else {
+  //         console.log("Added item:", JSON.stringify(data, null, 2));
+  //         res.send("Added " + req.body.name + " to sensor group");
+  //       }
+  //     });
+  //   } else {
+  //     res.send(false);
+  //   }
+  // }
 });
 
 add.post('/add/value', unlencodedParser, function(req, res) {
