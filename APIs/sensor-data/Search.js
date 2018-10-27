@@ -220,7 +220,15 @@ search.get('/sensors/num/:groupId/:sensorType', function(req, res) {
     } else {
       // print all the movies
       console.log("Scan succeeded.");
-      res.send(data);
+      var max = 0;
+      for(let i=0;i<data.Count;i++){
+        var num = parseInt(data.Items[i].num);
+        if(num > max){
+          max = num;
+        }
+      }
+      max += 1;
+      res.send(max.toString());
       if (typeof data.LastEvaluatedKey != "undefined") {
         console.log("Scanning for more...");
         params.ExclusiveStartKey = data.LastEvaluatedKey;
