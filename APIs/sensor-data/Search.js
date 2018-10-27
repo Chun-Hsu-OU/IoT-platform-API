@@ -153,21 +153,23 @@ search.get('/sensors/:sensortype/:sensorid', function(req, res) {
   });
 });
 
-//use type and num search single sensorId
+//use type and num and macAddr search single sensorId
 search.get('/sensors/single/:macAddr/:sensorType/:num', function(req, res) {
   var params = {
     TableName: "Sensors",
-    FilterExpression: "#type = :type and #num = :num and #macAddr = :macAddr",
+    FilterExpression: "#type = :type and #num = :num and #macAddr = :macAddr and #visible = :val",
     ProjectionExpression: "sensorId",
     ExpressionAttributeNames: {
       "#type": "sensorType",
       "#num": "num",
-      "#macAddr": "macAddr"
+      "#macAddr": "macAddr",
+      "#visible": "visible"
     },
     ExpressionAttributeValues: {
       ":type": req.params.sensorType,
       ":num": req.params.num,
-      ":macAddr": req.params.macAddr
+      ":macAddr": req.params.macAddr,
+      ":val": 1
     }
   };
 
@@ -182,6 +184,43 @@ search.get('/sensors/single/:macAddr/:sensorType/:num', function(req, res) {
       // print all the movies
       console.log("Scan succeeded.");
       res.send(data.Items[0].sensorId);
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);
+      }
+    }
+  }
+});
+
+//算sensorhub內同種類的感測器有幾個，用於計算感測器編號
+search.get('/sensors/num/:groupId/:sensorType', function(req, res) {
+  var params = {
+    TableName: "Sensors",
+    FilterExpression: "#type = :type and #group = :groupId and #visible = :val",
+    ExpressionAttributeNames: {
+      "#group": "groupId",
+      "#type": "sensorType",
+      "#visible": "visible"
+    },
+    ExpressionAttributeValues: {
+      ":groupId": req.params.groupId,
+      ":type": req.params.sensorType,
+      ":val": 1
+    }
+  };
+
+  res.set('Access-Control-Allow-Origin', '*');
+
+  docClient.scan(params, onScan);
+
+  function onScan(err, data) {
+    if (err) {
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      // print all the movies
+      console.log("Scan succeeded.");
+      res.send(data);
       if (typeof data.LastEvaluatedKey != "undefined") {
         console.log("Scanning for more...");
         params.ExclusiveStartKey = data.LastEvaluatedKey;

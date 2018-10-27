@@ -36,7 +36,8 @@ account.post('/account/', unlencodedParser, function(req, res) {
       "email": req.body.email,
       "password": req.body.password,
       "name": req.body.name,
-      "fcmToken": fcmToken
+      "fcmToken": fcmToken,
+      "managed": 1
     }
   }
 

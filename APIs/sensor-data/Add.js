@@ -21,27 +21,6 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 // adds an area to an owner
 add.post('/add/area', unlencodedParser, function(req, res) {
   var d = new Date();
-  var checker = false;
-  var location = "";
-  var longitude = "";
-  var latitude = "";
-  var ip = "";
-
-  if(req.body.location != ""){
-    location = req.body.location;
-  }
-
-  if(req.body.longitude != ""){
-    longitude = req.body.longitude;
-  }
-
-  if(req.body.latitude != ""){
-    latitude = req.body.latitude;
-  }
-
-  if(req.body.ip != ""){
-    ip = req.body.ip;
-  }
 
   var params = {
     TableName: "Areas",
@@ -50,51 +29,24 @@ add.post('/add/area', unlencodedParser, function(req, res) {
       "ownerId": req.body.ownerId,
       "createdtime": d.getTime(),
       "name": req.body.name,
-      "location": location,
-      "longitude": longitude,
-      "latitude": latitude,
-      "ip": ip,
+      "location": req.body.location,
+      "longitude": req.body.longitude,
+      "latitude": req.body.latitude,
+      "ip": req.body.ip,
       "visible": 1
     }
   };
 
-  var params_check = {
-    TableName: "Areas"
-  }
-
   res.set('Access-Control-Allow-Origin', '*');
-  docClient.scan(params_check, onScan);
 
-  function onScan(err, data) {
+  docClient.put(params, function(err, data) {
     if (err) {
-      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+      console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
     } else {
-      console.log("Scan succeeded.");
-      data.Items.forEach(function(items) {
-        if (items.name == req.body.name && items.visible == 1) {
-          checker = true;
-        }
-      });
-      if (typeof data.LastEvaluatedKey != "undefined") {
-        console.log("Scanning for more...");
-        params.ExclusiveStartKey = data.LastEvaluatedKey;
-        docClient.scan(params, onScan);
-      }
+      console.log("Added item:", JSON.stringify(data, null, 2));
+      res.send("Added " + req.body.name + " to owner");
     }
-
-    if (checker == false) {
-      docClient.put(params, function(err, data) {
-        if (err) {
-          console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-        } else {
-          console.log("Added item:", JSON.stringify(data, null, 2));
-          res.send("Added " + req.body.name + " to owner");
-        }
-      });
-    } else {
-      res.send("Area name already in use, please try another one");
-    }
-  }
+  });
 });
 
 // adds a sensorGroup to an area
