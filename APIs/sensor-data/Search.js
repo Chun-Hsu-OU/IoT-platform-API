@@ -194,17 +194,17 @@ search.get('/sensors/single/:macAddr/:sensorType/:num', function(req, res) {
 });
 
 //算sensorhub內同種類的感測器有幾個，用於計算感測器編號
-search.get('/sensors/num/:groupId/:sensorType', function(req, res) {
+search.get('/sensors/num/:macAddr/:sensorType', function(req, res) {
   var params = {
     TableName: "Sensors",
-    FilterExpression: "#type = :type and #group = :groupId and #visible = :val",
+    FilterExpression: "#type = :type and #macAddr = :macAddr and #visible = :val",
     ExpressionAttributeNames: {
-      "#group": "groupId",
+      "#macAddr": "macAddr",
       "#type": "sensorType",
       "#visible": "visible"
     },
     ExpressionAttributeValues: {
-      ":groupId": req.params.groupId,
+      ":macAddr": req.params.macAddr,
       ":type": req.params.sensorType,
       ":val": 1
     }
