@@ -30,9 +30,7 @@ add.post('/add/area', unlencodedParser, function(req, res) {
       "createdtime": d.getTime(),
       "name": req.body.name,
       "location": req.body.location,
-      "longitude": req.body.longitude,
-      "latitude": req.body.latitude,
-      "ip": req.body.ip,
+      "city": req.body.city,
       "visible": 1
     }
   };
@@ -61,9 +59,6 @@ add.post('/add/sensorGroup', unlencodedParser, function(req, res) {
       "createdtime": d.getTime(),
       "name": req.body.name,
       "macAddr": req.body.macAddr,
-      "description": req.body.description,
-      "plant": req.body.plant,
-      "sensorTypes": req.body.sensorTypes,
       "ownerId": req.body.ownerId,
       "visible": 1
     }

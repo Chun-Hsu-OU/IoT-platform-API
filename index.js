@@ -17,10 +17,6 @@ var update = require('./APIs/sensor-data/Update');
 var control = require('./APIs/Control');
 var agri_log = require('./APIs/Agri_log');
 var file_manage = require('./APIs/S3_file_manage');
-var expert_system = require('./APIs/expert_system');
-var conditioner = require('./APIs/Conditioner');
-var rule = require('./APIs/Rule');
-var greenhouseDEMO = require('./APIs/greenhouseDEMO');
 
 //var unlencodedParser = bodyParser.urlencoded({ extended: false });
 
@@ -38,10 +34,7 @@ app.use('/api/', update);
 app.use('/api/', control);
 app.use('/api/', agri_log);
 app.use('/api/', file_manage);
-app.use('/api/', expert_system);
-app.use('/api/', conditioner);
-app.use('/api/', rule);
-app.use('/api/', greenhouseDEMO);
+
 
 app.listen(port, function() {
     console.log('ON localhost port 3000');
