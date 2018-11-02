@@ -28,18 +28,14 @@ update.post('/update/area', unlencodedParser, function(req, res) {
         "ownerId": req.body.ownerId,
         "areaId": req.body.areaId
     },
-    UpdateExpression: "set #locate = :loc, #area_name = :name, #longitude = :lng, #latitude = :lat",
+    UpdateExpression: "set #locate = :loc, #area_name = :name",
     ExpressionAttributeNames:{
         "#locate": "location",
-        "#area_name": "name",
-        "#longitude": "longitude",
-        "#latitude": "latitude"
+        "#area_name": "name"
     },
     ExpressionAttributeValues:{
         ":loc": req.body.location,
-        ":name": req.body.name,
-        ":lng": req.body.longitude,
-        ":lat": req.body.latitude
+        ":name": req.body.name
     },
     ReturnValues:"UPDATED_NEW"
   };
@@ -57,40 +53,6 @@ update.post('/update/area', unlencodedParser, function(req, res) {
       }
   });
 });
-
-// Updates the ipc items in the "Area Table"
-update.post('/update/area/ipc', unlencodedParser, function(req, res) {
-    var params = {
-      TableName: "Areas",
-      Key: {
-          "ownerId": req.body.ownerId,
-          "areaId": req.body.areaId
-      },
-      UpdateExpression: "set #area_name = :name, #ipc_ip = :ip",
-      ExpressionAttributeNames:{
-          "#area_name": "name",
-          "#ipc_ip": "ip"
-      },
-      ExpressionAttributeValues:{
-          ":name": req.body.name,
-          ":ip": req.body.ip
-      },
-      ReturnValues:"UPDATED_NEW"
-    };
-  
-    res.set('Access-Control-Allow-Origin', '*');
-  
-    console.log("Updating the item...");
-    docClient.update(params, function(err, data) {
-        if (err) {
-            console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
-            res.send("Error Updating Item");
-        } else {
-            console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
-            res.send("UpdateItem succeeded");
-        }
-    });
-  });
 
 // Updates the chosen item in the "Sensor_Group Table"
 update.post('/update/group', unlencodedParser, function(req, res) {
@@ -100,14 +62,14 @@ update.post('/update/group', unlencodedParser, function(req, res) {
         "areaId": req.body.areaId,
         "groupId": req.body.groupId
     },
-    UpdateExpression: "set description = :descrip, #group_name = :name, product = :product",
+    UpdateExpression: "set #group_name = :name, #macAddr = :macAddr",
     ExpressionAttributeNames:{
-        "#group_name": "name"
+        "#group_name": "name",
+        "#macAddr": "macAddr"
     },
     ExpressionAttributeValues:{
-        ":descrip": req.body.description,
         ":name": req.body.name,
-        ":product": req.body.product
+        ":macAddr": req.body.macAddr
     },
     ReturnValues:"UPDATED_NEW"
   };
@@ -124,39 +86,6 @@ update.post('/update/group', unlencodedParser, function(req, res) {
           res.send("UpdateItem succeeded");
       }
   });
-});
-
-// Updates the LoRa p2p node info in the "Sensor_Group Table"
-update.post('/update/group/node', unlencodedParser, function(req, res) {
-    var params = {
-      TableName: "Sensor_Group",
-      Key: {
-          "areaId": req.body.areaId,
-          "groupId": req.body.groupId
-      },
-      UpdateExpression: "set #group_name = :name, macAddr = :macAddr",
-      ExpressionAttributeNames:{
-          "#group_name": "name"
-      },
-      ExpressionAttributeValues:{
-          ":name": req.body.name,
-          ":macAddr": req.body.macAddr
-      },
-      ReturnValues:"UPDATED_NEW"
-    };
-  
-    res.set('Access-Control-Allow-Origin', '*');
-  
-    console.log("Updating the item...");
-    docClient.update(params, function(err, data) {
-        if (err) {
-            console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
-            res.send("Error Updating Item");
-        } else {
-            console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
-            res.send("UpdateItem succeeded");
-        }
-    });
 });
 
 // Updates the chosen item in the "Sensors Table"
