@@ -96,13 +96,12 @@ update.post('/update/sensor', unlencodedParser, function(req, res) {
         "groupId": req.body.groupId,
         "sensorId": req.body.sensorId
     },
-    UpdateExpression: "set sensorType = :type, #sensor_name = :name",
+    UpdateExpression: "set #sensor_name = :name",
     ExpressionAttributeNames:{
         "#sensor_name": "name"
     },
     ExpressionAttributeValues:{
-        ":type": req.body.sensorType,
-        ":name": req.body.name,
+        ":name": req.body.name
     },
     ReturnValues:"UPDATED_NEW"
   };
