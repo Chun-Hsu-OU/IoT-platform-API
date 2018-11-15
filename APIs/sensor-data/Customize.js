@@ -114,9 +114,11 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
       //檢查前面是否有中斷數據
       var begin = Number(req.params.begin);
       //一開始跟選擇開始的時間有差距1小時以上，代表有中斷數據
-      if((begin - data.Items[0].timestamp) >= (3600*1000)){
+      console.log(data.Items[0].timestamp - begin);
+      if((data.Items[0].timestamp - begin) >= (3600*1000)){
         //算有幾個15分鐘
-        var count = Math.floor((begin - data.Items[0].timestamp) / (15*60*1000));
+        var count = Math.floor((data.Items[0].timestamp - begin) / (15*60*1000));
+        console.log(count);
         for(let i=0; i<count; i++){
           begin += (15*60*1000);
           var item = {
