@@ -72,7 +72,7 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
     } else {
       console.log("Query succeeded.");
       /* 檢查有無中斷數據，如果中斷1小時以上，以每15分鐘補齊，數據值 = null */
-
+      var interval = 12;
       //紀錄開始中斷的數據時間(可能斷好幾個)
       var times = [];
       for(let i=0; i<data.Items.length; i++){
@@ -94,11 +94,11 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
           //結束斷的時間
           var next_value = data.Items[index+1].timestamp;
           //算有幾個15分鐘
-          var count = Math.floor((next_value - now_value) / (15*60*1000));
+          var count = Math.floor((next_value - now_value) / (interval*60*1000));
           
           //開始補數據
           for(let j=0; j<count; j++){
-              now_value += (15*60*1000);
+              now_value += (interval*60*1000);
               //不要跟結束時間重複
               if(now_value != next_value){
                 var item = {
@@ -117,10 +117,10 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
       console.log(data.Items[0].timestamp - begin);
       if((data.Items[0].timestamp - begin) >= (3600*1000)){
         //算有幾個15分鐘
-        var count = Math.floor((data.Items[0].timestamp - begin) / (15*60*1000));
+        var count = Math.floor((data.Items[0].timestamp - begin) / (interval*60*1000));
         console.log(count);
         for(let i=0; i<count; i++){
-          begin += (15*60*1000);
+          begin += (interval*60*1000);
           var item = {
             "timestamp": begin,
             "value": null
