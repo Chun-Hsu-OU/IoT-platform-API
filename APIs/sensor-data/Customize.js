@@ -72,6 +72,7 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
     } else {
       console.log("Query succeeded.");
       /* 檢查有無中斷數據，如果中斷1小時以上，以每15分鐘補齊，數據值 = null */
+
       //紀錄開始中斷的數據時間(可能斷好幾個)
       var times = [];
       for(let i=0; i<data.Items.length; i++){
@@ -108,6 +109,23 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
                 data.Items.splice(index+1+j, 0, item);
               }	
           }
+      }
+
+      //檢查前面是否有中斷數據
+      var begin = Number(req.params.begin);
+      //一開始跟選擇開始的時間有差距1小時以上，代表有中斷數據
+      if((begin - data.Items[0].timestamp) >= (3600*1000)){
+        //算有幾個15分鐘
+        var count = Math.floor((begin - data.Items[0].timestamp) / (15*60*1000));
+        for(let i=0; i<count; i++){
+          begin += (15*60*1000);
+          var item = {
+            "timestamp": begin,
+            "value": null
+          }
+          //插入數據
+          data.Items.splice(i, 0, item);
+        }
       }
 
       res.send(JSON.stringify(data, null, 2));
