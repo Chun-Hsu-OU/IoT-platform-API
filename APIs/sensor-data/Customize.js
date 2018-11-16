@@ -73,7 +73,7 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
       console.log("Query succeeded.");
       /* 檢查有無中斷數據，如果中斷1小時以上，以自訂時間區間補齊，數據值 = null */
 
-      //自訂時間區間(分鐘)
+      //自訂時間間隔(分鐘)
       var interval = 12;
       //紀錄開始中斷的數據時間(可能斷好幾個)
       var times = [];
@@ -95,7 +95,7 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
           var now_value = data.Items[index].timestamp;
           //結束斷的時間
           var next_value = data.Items[index+1].timestamp;
-          //算有幾個時間區間
+          //算有幾個時間間隔
           var count = Math.floor((next_value - now_value) / (interval*60*1000));
           
           //開始補數據
@@ -116,11 +116,9 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
       //檢查前面是否有中斷數據
       var begin = Number(req.params.begin);
       //一開始跟選擇開始的時間有差距1小時以上，代表有中斷數據
-      console.log(data.Items[0].timestamp - begin);
       if((data.Items[0].timestamp - begin) >= (3600*1000)){
-        //算有幾個時間區間
+        //算有幾個時間間隔
         var count = Math.floor((data.Items[0].timestamp - begin) / (interval*60*1000));
-        console.log(count);
         for(let i=0; i<count; i++){
           begin += (interval*60*1000);
           var item = {
