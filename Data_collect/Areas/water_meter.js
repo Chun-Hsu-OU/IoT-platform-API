@@ -38,7 +38,6 @@ var start = function() {
 }
 
 async function handle(data, macAddr){
-    // console.log(data);
     var points = parseInt(data.slice(12));
     var divisor = 1;
     for(let i=0;i<points;i++){
@@ -46,11 +45,8 @@ async function handle(data, macAddr){
     }
     var meter_data = parseInt(data.slice(2,12));
     meter_data = meter_data / divisor;
-    // console.log(meter_data);
     var id = await methods.searchId(macAddr, "METER", "1");
     methods.save_data("METER", meter_data, id);
-    // console.log(id);
-    // console.log(meter_data);
 }
 
 module.exports.start = start;
