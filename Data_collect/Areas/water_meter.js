@@ -39,7 +39,6 @@ var start = function() {
 
 async function handle(data, macAddr){
     var points = parseInt(data.slice(12));
-    points = points - 3;
     var divisor = 1;
     for(let i=0;i<points;i++){
         divisor = divisor * 10;
