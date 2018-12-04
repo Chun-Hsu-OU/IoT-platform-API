@@ -153,6 +153,48 @@ search.get('/sensors/:sensortype/:sensorid', function(req, res) {
   });
 });
 
+//收水表最新數據
+search.get('/meter/new/:sensorid', function(req, res) {
+  var d = new Date();
+  var adjust = 3600*1000;
+
+  var params = {
+    TableName: "METER",
+    ProjectionExpression: "sensorId, #time_id, #v",
+    KeyConditionExpression: "sensorId = :sensor_id and #time_id > :t1",
+    ExpressionAttributeNames: {
+      "#time_id": "timestamp",
+      "#v": "value"
+    },
+    ExpressionAttributeValues: {
+      ":sensor_id": req.params.sensorid,
+      ":t1": (d.getTime() - adjust)
+    }
+  };
+
+  res.set('Access-Control-Allow-Origin', '*');
+
+  docClient.query(params, function(err, data) {
+    if (err) {
+      console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
+    } else {
+      console.log("Query succeeded.");
+      data.Items.sort(function(a, b) {
+        return parseFloat(a.timestamp) - parseFloat(b.timestamp);
+      });
+      length = data.Count;
+      if (length >= 2) {
+        //用最後兩筆差異算出最新澆水量
+        var amount = data.Items[length - 1].value - data.Items[length - 2].value;
+        res.send(JSON.stringify(amount, null, 2));
+      }
+      else {
+        res.send("無數據");
+      }
+    }
+  });
+});
+
 //use type and num and macAddr search single sensorId
 search.get('/sensors/single/:macAddr/:sensorType/:num', function(req, res) {
   var params = {
