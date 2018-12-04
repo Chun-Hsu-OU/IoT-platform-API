@@ -7,6 +7,7 @@ var methods = require('../methods');
 
 // file为文件所在路径
 var doc = YAML.parse(fs.readFileSync(path.join(__dirname, '../../config') + '/secrets.yml').toString());
+var meter_addr = YAML.parse(fs.readFileSync(path.join(__dirname, '../../config') + '/meter_addr.yml').toString());
 
 var option = {
     port: doc.MQTT_server1.port,
@@ -21,7 +22,7 @@ var client = mqtt.connect('mqtt://' + doc.MQTT_server1.IP, option);
 var start = function() {
     //mqtt
     client.on("connect", function() {
-        console.log("Subscribing TOPIC: " + topic);
+        // console.log("Subscribing TOPIC: " + topic);
         client.subscribe(topic);
     });
 
@@ -30,8 +31,11 @@ var start = function() {
 
         if (msg_temp.startsWith("[{")) {
             var sensor_data = JSON.parse(msg_temp)[0];
-            if(sensor_data.macAddr == "00000000fe0528ce"){
-                handle(sensor_data.data, sensor_data.macAddr);
+            for(let i=0; i < meter_addr.macAddr.length; i++){
+                if(sensor_data.macAddr == meter_addr.macAddr[i]){
+                    // console.log(sensor_data);
+                    handle(sensor_data.data, sensor_data.macAddr);
+                }
             }
         }
     });
@@ -47,6 +51,10 @@ async function handle(data, macAddr){
     meter_data = meter_data / divisor;
     var id = await methods.searchId(macAddr, "METER", "1");
     methods.save_data("METER", meter_data, id);
+    // console.log(data);
+    // console.log("macAddr: "+macAddr);
+    // console.log("data: "+meter_data);
 }
 
+// start();
 module.exports.start = start;
