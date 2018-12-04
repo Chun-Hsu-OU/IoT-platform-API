@@ -185,7 +185,7 @@ search.get('/meter/new/:sensorid', function(req, res) {
       length = data.Count;
       if (length >= 2) {
         //用最後兩筆差異算出最新澆水量
-        var amount = data.Items[length - 1].value - data.Items[length - 2].value;
+        var amount = (data.Items[length-1].value - data.Items[length-2].value) * 1000;
         res.send(JSON.stringify(amount, null, 2));
       }
       else {
