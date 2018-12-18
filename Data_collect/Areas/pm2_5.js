@@ -37,32 +37,23 @@ var start = function() {
             for(let i=0; i < meter_addr.macAddr.length; i++){
                 if(sensor_data.macAddr == meter_addr.macAddr[i]){
                     console.log(sensor_data);
-                    handle(sensor_data.data, sensor_data.macAddr, sensor_data.time);
+                    handle(sensor_data.data, sensor_data.macAddr);
                 }
             }
         }
     });
 }
 
-async function handle(data, macAddr, time){
+async function handle(data, macAddr){
 
-    var converted_time = new Date(time).getTime();
-    // console.log("現在時間： "+converted_time);
-    // console.log("紀錄時間： "+record_time);
-
-    if((converted_time - record_time) >= time_period){
-        //記錄時間
-        record_time = converted_time;
-
-        var raw_data = data.slice(12,16);
-        // console.log("raw: " + raw_data);
-        var pm2_5 = parseInt(raw_data, 16);
-        // console.log("pm2.5: " + pm2_5);
-        // console.log("------------------------------------");
-        
-        var id = await methods.searchId(macAddr, "PM2_5", "1");
-        methods.save_data("PM2_5", pm2_5, id);
-    }
+    var raw_data = data.slice(12,16);
+    // console.log("raw: " + raw_data);
+    var pm2_5 = parseInt(raw_data, 16);
+    // console.log("pm2.5: " + pm2_5);
+    // console.log("------------------------------------");
+    
+    var id = await methods.searchId(macAddr, "PM2_5", "1");
+    methods.save_data("PM2_5", pm2_5, id);
     
 }
 
