@@ -23,7 +23,6 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 // Add a new controller to the DynamoDB
 control.post('/add/control', unlencodedParser, function(req, res) {
   var d = new Date();
-  var checker = false;
 
   var params = {
     TableName: "Controller",
@@ -42,46 +41,17 @@ control.post('/add/control', unlencodedParser, function(req, res) {
     }
   }
 
-  // Checks if the Conditione has been registered before
-  var params_check = {
-    TableName: "Controller"
-  }
-
   res.set('Access-Control-Allow-Origin', '*');
 
-  docClient.scan(params_check, onScan);
-
-  function onScan(err, data) {
+  docClient.put(params, function(err, data) {
     if (err) {
-      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+      console.error("Unable to register controller", req.body.name, ". Error JSON:", JSON.stringify(err, null, 2));
+      res.send("Unable to register controller", req.body.name);
     } else {
-      console.log("Scan succeeded.");
-      data.Items.forEach(function(Controller) {
-        if (Controller.name == req.body.name && Controller.visible == 1) {
-          checker = true;
-        }
-      });
-      if (typeof data.LastEvaluatedKey != "undefined") {
-        console.log("Scanning for more...");
-        params.ExclusiveStartKey = data.LastEvaluatedKey;
-        docClient.scan(params_check, onScan);
-      }
+      console.log("PutItem succeeded:", req.body.name);
+      res.send("Register succeeded");
     }
-
-    if (checker == false) {
-      docClient.put(params, function(err, data) {
-        if (err) {
-          console.error("Unable to register controller", req.body.name, ". Error JSON:", JSON.stringify(err, null, 2));
-          res.send("Unable to register controller", req.body.name);
-        } else {
-          console.log("PutItem succeeded:", req.body.name);
-          res.send("Register succeeded");
-        }
-      });
-    } else {
-      res.send("Controller Name "+ req.body.name +" already in use");
-    }
-  }
+  });
 });
 
 control.post('/delete_item/control', unlencodedParser, function(req, res) {
