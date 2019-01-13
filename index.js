@@ -17,6 +17,7 @@ var update = require('./APIs/sensor-data/Update');
 var control = require('./APIs/Control');
 var agri_log = require('./APIs/Agri_log');
 var file_manage = require('./APIs/S3_file_manage');
+var open = require('./APIs/open');
 
 //var unlencodedParser = bodyParser.urlencoded({ extended: false });
 
@@ -34,6 +35,7 @@ app.use('/api/', update);
 app.use('/api/', control);
 app.use('/api/', agri_log);
 app.use('/api/', file_manage);
+app.use('/open/', open);
 
 
 app.listen(port, function() {

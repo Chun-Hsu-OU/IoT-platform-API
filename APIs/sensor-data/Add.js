@@ -144,30 +144,30 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
   // }
 });
 
-add.post('/add/value', unlencodedParser, function(req, res) {
-  var d = new Date();
-  var checker = false;
-  var time = d.getTime();
-  //console.log("Hi" + req.body.sensorType);
+// add.post('/add/value', unlencodedParser, function(req, res) {
+//   var d = new Date();
+//   var checker = false;
+//   var time = d.getTime();
+//   //console.log("Hi" + req.body.sensorType);
 
-  var params = {
-    TableName: req.body.sensorType,
-    Item: {
-      "sensorId": req.body.sensorId,
-      "timestamp": time,
-      "sensorType": req.body.sensorType,
-      "value": req.body.value
-    }
-  };
+//   var params = {
+//     TableName: req.body.sensorType,
+//     Item: {
+//       "sensorId": req.body.sensorId,
+//       "timestamp": time,
+//       "sensorType": req.body.sensorType,
+//       "value": req.body.value
+//     }
+//   };
 
-  docClient.put(params, function(err, data) {
-    if (err) {
-      console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-    } else {
-      console.log("Added item:", JSON.stringify(data, null, 2));
-      res.send("Added sensing data of " + req.body.sensorId + " to DB");
-    }
-  });
-});
+//   docClient.put(params, function(err, data) {
+//     if (err) {
+//       console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+//     } else {
+//       console.log("Added item:", JSON.stringify(data, null, 2));
+//       res.send("Added sensing data of " + req.body.sensorId + " to DB");
+//     }
+//   });
+// });
 
 module.exports = add;

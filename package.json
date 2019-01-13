@@ -22,8 +22,11 @@
     "connect-busboy": "0.0.2",
     "express": "^4.16.3",
     "js-yaml": "^3.12.0",
+    "jsonwebtoken": "^8.4.0",
     "mqtt": "^2.18.3",
+    "regression": "^2.0.1",
     "request": "^2.87.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "yamljs": "^0.3.0"
   }
 }

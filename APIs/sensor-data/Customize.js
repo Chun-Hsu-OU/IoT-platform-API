@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var AWS = require("aws-sdk");
+var regression = require('regression');
 
 var custom = express.Router();
 
@@ -16,36 +17,6 @@ AWS.config.update({
 });
 
 var docClient = new AWS.DynamoDB.DocumentClient();
-
-// gets all data within a certain date range
-// custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', function(req, res) {
-//   // each sensor has a different time sync
-//   var params = {
-//     TableName: req.params.sensortype,
-//     ProjectionExpression: "sensorId, #time_id, #v",
-//     KeyConditionExpression: "sensorId = :sensor_id and #time_id between :t1 and :t2",
-//     ExpressionAttributeNames: {
-//       "#time_id": "timestamp",
-//       "#v": "value"
-//     },
-//     ExpressionAttributeValues: {
-//       ":sensor_id": req.params.sensorid,
-//       ":t1": Number(req.params.begin),
-//       ":t2": Number(req.params.end)
-//     }
-//   };
-
-//   res.set('Access-Control-Allow-Origin', '*');
-//   docClient.query(params, function(err, data) {
-//     if (err) {
-//       console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
-//       res.status(404).send("Unable to Query. Error");
-//     } else {
-//       console.log("Query succeeded.");
-//       res.send(JSON.stringify(data, null, 2));
-//     }
-//   });
-// });
 
 custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', function(req, res) {
   // each sensor has a different time sync
@@ -138,14 +109,99 @@ custom.get('/sensors_in_timeinterval/:sensortype/:sensorid/:begin/:end', functio
   });
 });
 
-custom.get('/authkey', function(req, res) {
-  try {
-    var doc = yaml.safeLoad(fs.readFileSync('./config/secrets.yml', 'utf8'));
-  } catch (e) {
-    console.log(e);
-  }
+// 線性回歸
+custom.get('/linear/:sensortype/:sensorid/:begin/:end', function(req, res) {
+  // each sensor has a different time sync
+  var params = {
+    TableName: req.params.sensortype,
+    ProjectionExpression: "sensorId, #time_id, #v",
+    KeyConditionExpression: "sensorId = :sensor_id and #time_id between :t1 and :t2",
+    ExpressionAttributeNames: {
+      "#time_id": "timestamp",
+      "#v": "value"
+    },
+    ExpressionAttributeValues: {
+      ":sensor_id": req.params.sensorid,
+      ":t1": Number(req.params.begin),
+      ":t2": Number(req.params.end)
+    }
+  };
+
   res.set('Access-Control-Allow-Origin', '*');
-  res.send(doc.Crypt.KEY);
+  docClient.query(params, function(err, data) {
+    if (err) {
+      console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
+      res.status(404).send("Unable to Query. Error");
+    } else {
+      if(data.Count > 0){
+        var all_outcome = [];
+        var begin = Number(req.params.begin);
+        var end = Number(req.params.end);
+        while(begin <= end){
+          //每次要計算的區間結束時間(暫時)
+          var temp_end = 0;
+          //判斷是否加上3小時後會超出原本的結束時間，超過就等於原本結束時間
+          if( (begin+(3*60*60*1000)) <= end){
+            temp_end = begin+(3*60*60*1000);
+          }else{
+            temp_end = end;
+          }
+
+          //挑出要處理的3小時內資料
+          var data_in_interval = [];
+          for(let i=0; i<data.Items.length; i++){
+            if(data.Items[i].timestamp >= begin && data.Items[i].timestamp <= temp_end){
+              data_in_interval.push(data.Items[i]);
+            }
+          }
+          
+          //3小時內有資料再處理
+          if(data_in_interval.length != 0){
+            console.log("from: "+begin);
+            console.log("to: "+temp_end);
+            console.log("");
+            /*
+              3小時內資料變成dataset給線性回歸使用
+              dataset元素:
+              1. index
+              2. value
+            */
+            var dataset = [];
+            for(let i=0; i<data_in_interval.length; i++){
+              var pair = [];
+              pair[0] = i;
+              pair[1] = parseFloat(data_in_interval[i].value);
+              dataset.push(pair);
+            }
+            console.log(dataset);
+
+            //使用線性回歸，計算斜率
+            var result = regression.linear(dataset);
+            var slope = result.equation[0];
+            var yIntercept = result.equation[1];
+            console.log("y = "+slope+"x + "+yIntercept);
+            console.log("----------------------------------");
+
+            //將這段時間的結果放進 all_outcome 陣列
+            var obj = {};
+            obj.from = begin;
+            obj.to = temp_end;
+            obj.slope = slope;
+            all_outcome.push(obj);
+          }
+
+          //計算下一個3小時
+          begin += 3*60*60*1000;
+        }
+
+        res.send(JSON.stringify(all_outcome, null, 2));
+        console.log("/////////結束//////////"); 
+        console.log("");
+        console.log("");
+      }
+      
+    }
+  });
 });
 
 module.exports = custom;

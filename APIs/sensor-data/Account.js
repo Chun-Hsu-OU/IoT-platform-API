@@ -2,6 +2,16 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var AWS = require("aws-sdk");
 var uuid = require("uuid");
+//讀yml檔需要
+const YAML = require('yamljs');
+const fs = require("fs");
+var path = require('path');
+//--------------------------
+
+// 載入 jwt 函式庫協助處理建立/驗證 token
+var jwt = require('jsonwebtoken');
+// 需要使用到 JWT 加密密碼
+var doc = YAML.parse(fs.readFileSync(path.join(__dirname, '../../config') + '/secrets.yml').toString());
 
 var account = express.Router();
 
@@ -17,7 +27,7 @@ AWS.config.update({
 });
 
 var docClient = new AWS.DynamoDB.DocumentClient();
-
+//-----------------------  公開  ----------------------------------
 // for register usage
 account.post('/account/', unlencodedParser, function(req, res) {
   var d = new Date();
@@ -88,7 +98,6 @@ account.post('/account/login/', unlencodedParser, function(req, res) {
   }
   var login = false;
 
-  console.log("Scanning SensorGroup table.");
   docClient.scan(params, onScan);
 
   function onScan(err, data) {
@@ -98,9 +107,14 @@ account.post('/account/login/', unlencodedParser, function(req, res) {
       console.log("Scan succeeded.");
       data.Items.forEach(function(accounts) {
         if ((accounts.email == req.body.email) && (accounts.password == req.body.password)) {
-          login = accounts.uuid;
-          console.log(req.body.email + req.body.password);
-          console.log(login);
+          var obj = {};
+          obj.uuid = accounts.uuid;
+          obj.token = jwt.sign(accounts, doc.JWT.secret, {
+            expiresIn: 60*60*24
+          });
+
+          login = obj;
+          console.log(accounts);
         }
       });
       if (typeof data.LastEvaluatedKey != "undefined") {
@@ -109,9 +123,31 @@ account.post('/account/login/', unlencodedParser, function(req, res) {
         docClient.scan(params, onScan);
       }
     }
-    res.send(login)
+    res.send(JSON.stringify(login, null, 2))
   }
 });
+//----------------------------------------------------------------
+
+//token驗證: 下面的api都是要經過token驗證
+account.use(function (req, res, next) {
+  var token = req.body.token || req.query.token || req.headers['token']
+  if (token) {
+    jwt.verify(token, doc.JWT.secret, function (err, decoded) {
+      // console.log(req.headers);
+      if (err) {
+        return res.json({success: false, message: 'Failed to authenticate token.'})
+      } else {
+        req.decoded = decoded
+        next()
+      }
+    })
+  } else {
+    return res.status(403).send({
+      success: false,
+      message: 'No token provided.'
+    })
+  }
+})
 
 account.get('/account/all', unlencodedParser, function(req, res) {
   var params = {

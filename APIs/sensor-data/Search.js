@@ -73,7 +73,6 @@ search.get('/sensorgroup_in_area/:areaId', function(req, res) {
       console.error("Unable to Read. Error:", JSON.stringify(err, null, 2));
       res.send("Unable to Query. Error:", JSON.stringify(err, null, 2));
     } else {
-      console.log(JSON.stringify(data, null, 2));
       data.Items.sort(function(a, b) {
         return parseFloat(a.createdtime) - parseFloat(b.createdtime);
       });
@@ -196,44 +195,44 @@ search.get('/meter/new/:sensorid', function(req, res) {
 });
 
 //use type and num and macAddr search single sensorId
-search.get('/sensors/single/:macAddr/:sensorType/:num', function(req, res) {
-  var params = {
-    TableName: "Sensors",
-    FilterExpression: "#type = :type and #num = :num and #macAddr = :macAddr and #visible = :val",
-    ProjectionExpression: "sensorId",
-    ExpressionAttributeNames: {
-      "#type": "sensorType",
-      "#num": "num",
-      "#macAddr": "macAddr",
-      "#visible": "visible"
-    },
-    ExpressionAttributeValues: {
-      ":type": req.params.sensorType,
-      ":num": req.params.num,
-      ":macAddr": req.params.macAddr,
-      ":val": 1
-    }
-  };
+// search.get('/sensors/single/:macAddr/:sensorType/:num', function(req, res) {
+//   var params = {
+//     TableName: "Sensors",
+//     FilterExpression: "#type = :type and #num = :num and #macAddr = :macAddr and #visible = :val",
+//     ProjectionExpression: "sensorId",
+//     ExpressionAttributeNames: {
+//       "#type": "sensorType",
+//       "#num": "num",
+//       "#macAddr": "macAddr",
+//       "#visible": "visible"
+//     },
+//     ExpressionAttributeValues: {
+//       ":type": req.params.sensorType,
+//       ":num": req.params.num,
+//       ":macAddr": req.params.macAddr,
+//       ":val": 1
+//     }
+//   };
 
-  res.set('Access-Control-Allow-Origin', '*');
+//   res.set('Access-Control-Allow-Origin', '*');
 
-  docClient.scan(params, onScan);
+//   docClient.scan(params, onScan);
 
-  function onScan(err, data) {
-    if (err) {
-      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
-    } else {
-      // print all the movies
-      console.log("Scan succeeded.");
-      res.send(data.Items[0].sensorId);
-      if (typeof data.LastEvaluatedKey != "undefined") {
-        console.log("Scanning for more...");
-        params.ExclusiveStartKey = data.LastEvaluatedKey;
-        docClient.scan(params, onScan);
-      }
-    }
-  }
-});
+//   function onScan(err, data) {
+//     if (err) {
+//       console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+//     } else {
+//       // print all the movies
+//       console.log("Scan succeeded.");
+//       res.send(data.Items[0].sensorId);
+//       if (typeof data.LastEvaluatedKey != "undefined") {
+//         console.log("Scanning for more...");
+//         params.ExclusiveStartKey = data.LastEvaluatedKey;
+//         docClient.scan(params, onScan);
+//       }
+//     }
+//   }
+// });
 
 //算sensorhub內同種類的感測器有幾個，用於計算感測器編號
 search.get('/sensors/num/:macAddr/:sensorType', function(req, res) {
