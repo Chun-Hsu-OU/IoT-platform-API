@@ -134,20 +134,23 @@ custom.get('/linear/:sensortype/:sensorid/:begin/:end', function(req, res) {
       res.status(404).send("Unable to Query. Error");
     } else {
       if(data.Count > 0){
+        //自訂時間(小時)
+        var interval = 3;
+        //記錄所有斜率資料(from、to、slope)
         var all_outcome = [];
         var begin = Number(req.params.begin);
         var end = Number(req.params.end);
         while(begin <= end){
           //每次要計算的區間結束時間(暫時)
           var temp_end = 0;
-          //判斷是否加上3小時後會超出原本的結束時間，超過就等於原本結束時間
-          if( (begin+(3*60*60*1000)) <= end){
-            temp_end = begin+(3*60*60*1000);
+          //判斷是否加上 自訂時間(小時) 後會超出原本的結束時間，超過就等於原本結束時間
+          if( (begin+(interval*60*60*1000)) <= end){
+            temp_end = begin+(interval*60*60*1000);
           }else{
             temp_end = end;
           }
 
-          //挑出要處理的3小時內資料
+          //挑出要處理的 自訂時間(小時) 內資料
           var data_in_interval = [];
           for(let i=0; i<data.Items.length; i++){
             if(data.Items[i].timestamp >= begin && data.Items[i].timestamp <= temp_end){
@@ -155,13 +158,13 @@ custom.get('/linear/:sensortype/:sensorid/:begin/:end', function(req, res) {
             }
           }
           
-          //3小時內有資料再處理
+          //自訂時間(小時) 內有資料再處理
           if(data_in_interval.length != 0){
             console.log("from: "+begin);
             console.log("to: "+temp_end);
             console.log("");
             /*
-              3小時內資料變成dataset給線性回歸使用
+              自訂時間(小時) 內資料變成dataset給線性回歸使用
               dataset元素:
               1. index
               2. value
@@ -190,8 +193,8 @@ custom.get('/linear/:sensortype/:sensorid/:begin/:end', function(req, res) {
             all_outcome.push(obj);
           }
 
-          //計算下一個3小時
-          begin += 3*60*60*1000;
+          //計算下一個 自訂時間(小時)
+          begin += interval*60*60*1000;
         }
 
         res.send(JSON.stringify(all_outcome, null, 2));

@@ -96,7 +96,11 @@ account.post('/account/login/', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Account"
   }
-  var login = false;
+  
+  var login = {
+    uuid: "",
+    token: "false"
+  };
 
   docClient.scan(params, onScan);
 
