@@ -1,0 +1,8 @@
+# 要偵測的 sensorhub 的 id
+pingtung:
+  - "19045d3a-77a0-408f-8b03-89a602a21375" # A
+  - "608c4dce-0012-414a-ab0f-893bf9fddc80" # B
+  - "62de7776-3dfe-4f99-87a4-cd21e952c54d" # C
+  - "ba590c47-9b9d-48ae-8553-ff65d4d4d0da" # D
+  - "0e452e28-e19e-430b-8c13-a599392c0afa" # E
+  - "617876b0-6695-4274-b2ce-9cc029b54429" # F

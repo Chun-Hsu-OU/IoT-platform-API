@@ -104,70 +104,31 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
       res.send("Added " + req.body.name + " to sensor group");
     }
   });
-
-  // var params_check = {
-  //   TableName: "Sensors"
-  // }
-
-  // res.set('Access-Control-Allow-Origin', '*');
-  // docClient.scan(params_check, onScan);
-
-  // function onScan(err, data) {
-  //   if (err) {
-  //     console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
-  //   } else {
-  //     console.log("Scan succeeded.");
-  //     data.Items.forEach(function(items) {
-  //       if (items.name == req.body.name && items.visible == 1) {
-  //         checker = true;
-  //       }
-  //     });
-  //     if (typeof data.LastEvaluatedKey != "undefined") {
-  //       console.log("Scanning for more...");
-  //       params.ExclusiveStartKey = data.LastEvaluatedKey;
-  //       docClient.scan(params, onScan);
-  //     }
-  //   }
-
-  //   if (checker == false) {
-  //     docClient.put(params, function(err, data) {
-  //       if (err) {
-  //         console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-  //       } else {
-  //         console.log("Added item:", JSON.stringify(data, null, 2));
-  //         res.send("Added " + req.body.name + " to sensor group");
-  //       }
-  //     });
-  //   } else {
-  //     res.send(false);
-  //   }
-  // }
 });
 
-// add.post('/add/value', unlencodedParser, function(req, res) {
-//   var d = new Date();
-//   var checker = false;
-//   var time = d.getTime();
-//   //console.log("Hi" + req.body.sensorType);
+// 增加一筆異常資料
+add.post('/add/abnormal/data', unlencodedParser, function(req, res) {
+  var d = new Date();
 
-//   var params = {
-//     TableName: req.body.sensorType,
-//     Item: {
-//       "sensorId": req.body.sensorId,
-//       "timestamp": time,
-//       "sensorType": req.body.sensorType,
-//       "value": req.body.value
-//     }
-//   };
+  var params = {
+    TableName: "Abnormal_data",
+    Item: {
+      "sensorId": req.body.sensorId,
+      "from_time": req.body.from_time,
+      "to_time": req.body.to_time,
+      "state": req.body.state
+    }
+  };
 
-//   docClient.put(params, function(err, data) {
-//     if (err) {
-//       console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-//     } else {
-//       console.log("Added item:", JSON.stringify(data, null, 2));
-//       res.send("Added sensing data of " + req.body.sensorId + " to DB");
-//     }
-//   });
-// });
+  res.set('Access-Control-Allow-Origin', '*');
+  docClient.put(params, function(err, data) {
+    if (err) {
+      console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      console.log("Added item:", JSON.stringify(data, null, 2));
+      res.send("Added an abnormal data to db");
+    }
+  });
+});
 
 module.exports = add;

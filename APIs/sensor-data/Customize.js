@@ -135,7 +135,7 @@ custom.get('/linear/:sensortype/:sensorid/:begin/:end', function(req, res) {
     } else {
       if(data.Count > 0){
         //自訂時間(小時)
-        var interval = 3;
+        var interval = 1.5;
         //記錄所有斜率資料(from、to、slope)
         var all_outcome = [];
         var begin = Number(req.params.begin);
@@ -143,11 +143,12 @@ custom.get('/linear/:sensortype/:sensorid/:begin/:end', function(req, res) {
         while(begin <= end){
           //每次要計算的區間結束時間(暫時)
           var temp_end = 0;
-          //判斷是否加上 自訂時間(小時) 後會超出原本的結束時間，超過就等於原本結束時間
+          //判斷是否加上 自訂時間(小時) 後會超出原本的結束時間
           if( (begin+(interval*60*60*1000)) <= end){
             temp_end = begin+(interval*60*60*1000);
           }else{
-            temp_end = end;
+            //不足 自訂時間(小時) 就不算，因為有些有資料有些沒資料，算出來資料筆數會不一樣
+            break;
           }
 
           //挑出要處理的 自訂時間(小時) 內資料
@@ -187,6 +188,7 @@ custom.get('/linear/:sensortype/:sensorid/:begin/:end', function(req, res) {
 
             //將這段時間的結果放進 all_outcome 陣列
             var obj = {};
+            obj.sensorId = req.params.sensorid;
             obj.from = begin;
             obj.to = temp_end;
             obj.slope = slope;

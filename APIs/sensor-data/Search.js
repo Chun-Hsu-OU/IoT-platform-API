@@ -17,7 +17,7 @@ AWS.config.update({
 
 var docClient = new AWS.DynamoDB.DocumentClient();
 
-// gets all areaIds of an owner
+// 拿一個owner下所有area資料
 search.get('/area/:ownerId', function(req, res, next) {
 
   var params = {
@@ -51,7 +51,7 @@ search.get('/area/:ownerId', function(req, res, next) {
   });
 });
 
-// gets all sensorgroups in an area
+// 拿一個area下所有sensorhub資料
 search.get('/sensorgroup_in_area/:areaId', function(req, res) {
   var params = {
     TableName: "Sensor_Group",
@@ -81,7 +81,7 @@ search.get('/sensorgroup_in_area/:areaId', function(req, res) {
   });
 });
 
-// gets all sensors in sensorgroup
+// 拿一個sensorhub下所有sensor資料
 search.get('/sensors_in_group/:groupId', function(req, res) {
   var params = {
     TableName: "Sensors",
@@ -112,7 +112,7 @@ search.get('/sensors_in_group/:groupId', function(req, res) {
   });
 });
 
-//gets single sensor newest data
+// 拿一個sensor最新的數據
 search.get('/sensors/:sensortype/:sensorid', function(req, res) {
   var d = new Date();
   var adjust = 3600*1000;
@@ -152,7 +152,7 @@ search.get('/sensors/:sensortype/:sensorid', function(req, res) {
   });
 });
 
-//收水表最新數據
+// 收水表最新數據
 search.get('/meter/new/:sensorid', function(req, res) {
   var d = new Date();
   var adjust = 3600*1000;
@@ -194,47 +194,7 @@ search.get('/meter/new/:sensorid', function(req, res) {
   });
 });
 
-//use type and num and macAddr search single sensorId
-// search.get('/sensors/single/:macAddr/:sensorType/:num', function(req, res) {
-//   var params = {
-//     TableName: "Sensors",
-//     FilterExpression: "#type = :type and #num = :num and #macAddr = :macAddr and #visible = :val",
-//     ProjectionExpression: "sensorId",
-//     ExpressionAttributeNames: {
-//       "#type": "sensorType",
-//       "#num": "num",
-//       "#macAddr": "macAddr",
-//       "#visible": "visible"
-//     },
-//     ExpressionAttributeValues: {
-//       ":type": req.params.sensorType,
-//       ":num": req.params.num,
-//       ":macAddr": req.params.macAddr,
-//       ":val": 1
-//     }
-//   };
-
-//   res.set('Access-Control-Allow-Origin', '*');
-
-//   docClient.scan(params, onScan);
-
-//   function onScan(err, data) {
-//     if (err) {
-//       console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
-//     } else {
-//       // print all the movies
-//       console.log("Scan succeeded.");
-//       res.send(data.Items[0].sensorId);
-//       if (typeof data.LastEvaluatedKey != "undefined") {
-//         console.log("Scanning for more...");
-//         params.ExclusiveStartKey = data.LastEvaluatedKey;
-//         docClient.scan(params, onScan);
-//       }
-//     }
-//   }
-// });
-
-//算sensorhub內同種類的感測器有幾個，用於計算感測器編號
+// 算sensorhub內同種類的感測器有幾個，用於計算感測器編號
 search.get('/sensors/num/:macAddr/:sensorType', function(req, res) {
   var params = {
     TableName: "Sensors",
@@ -279,7 +239,7 @@ search.get('/sensors/num/:macAddr/:sensorType', function(req, res) {
   }
 });
 
-// gets all sensors with same owner
+// 拿一個owner下所有的sensor資料
 search.get('/sensors_owned/:ownerId', function(req, res) {
   var params = {
     TableName: "Sensors",
