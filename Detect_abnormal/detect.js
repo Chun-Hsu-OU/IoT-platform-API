@@ -13,7 +13,7 @@ var sensortype = YAML.parse(fs.readFileSync(path.join(__dirname, './config') + '
 //API網址
 var api_url = "http://nthu-smart-farming.kits.tw:3000/";
 
-//多久(小時) 偵測一次
+//一次偵測的時間長度(小時)
 var interval = 1.5;
 
 //一開始馬上偵測一次
@@ -22,7 +22,7 @@ detect();
 //之後固定用 設定時間(小時) 週期性偵測
 setInterval(function(){
     detect(); 
-}, interval*60*60*1000);
+}, 12*60*1000);
 
 //需要等token傳回才能繼續
 async function detect() {
