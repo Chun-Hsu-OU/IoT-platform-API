@@ -7,6 +7,7 @@ var Yunlin = require('./Areas/Yunlin');
 var water_meter = require('./Areas/water_meter');
 var electric_meter = require('./Areas/electric_meter');
 var pm2_5 = require('./Areas/pm2_5');
+var switch_state = require('./Areas/switch_state');
 
 nthu_roof.start();
 nthu_roof_lora.start();
@@ -17,3 +18,4 @@ Yunlin.start();
 water_meter.start();
 electric_meter.start();
 pm2_5.start();
+switch_state.start();

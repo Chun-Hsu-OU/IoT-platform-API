@@ -19,7 +19,7 @@ var interval = 1.5;
 //一開始馬上偵測一次
 detect();
 
-//之後固定用 設定時間(小時) 週期性偵測
+//之後固定時間 週期性偵測
 setInterval(function(){
     detect(); 
 }, 12*60*1000);
