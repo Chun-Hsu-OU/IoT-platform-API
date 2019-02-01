@@ -51,6 +51,7 @@ agri_log.post('/add/log', unlencodedParser, function(req, res) {
   });
 });
 
+// Search logs by feature
 agri_log.get('/search/log/:feature/:value', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Agri_log",
@@ -61,6 +62,46 @@ agri_log.get('/search/log/:feature/:value', unlencodedParser, function(req, res)
     },
     ExpressionAttributeValues: {
       ":feature_description": req.params.value,
+      ":val": 1
+    }
+  };
+
+  res.set('Access-Control-Allow-Origin', '*');
+  docClient.scan(params, onScan);
+
+  function onScan(err, data) {
+    if (err) {
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      // print all the movies
+      console.log("Scan succeeded.");
+      data.Items.sort(function(a, b) {
+        return parseFloat(a.set_time) - parseFloat(b.set_time);
+      });
+      res.send(JSON.stringify(data, null, 2));
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);
+      }
+    }
+  }
+});
+
+// 找一段時間內的log，用於匯出excel
+agri_log.get('/export/log/:ownerId/:begin/:end', unlencodedParser, function(req, res) {
+  var params = {
+    TableName: "Agri_log",
+    FilterExpression: "#ownerId = :ownerId and #time_id between :t1 and :t2 and #visible = :val",
+    ExpressionAttributeNames: {
+      "#ownerId": "ownerId",
+      "#time_id": "timestamp",
+      "#visible": "visible"
+    },
+    ExpressionAttributeValues: {
+      ":ownerId": req.params.ownerId,
+      ":t1": Number(req.params.begin),
+      ":t2": Number(req.params.end),
       ":val": 1
     }
   };
