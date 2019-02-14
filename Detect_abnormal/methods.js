@@ -1,4 +1,6 @@
 var rp = require('request-promise');
+const fs = require('fs');
+
 //API網址
 var api_url = "http://nthu-smart-farming.kits.tw:3000/";
 
@@ -129,11 +131,13 @@ Arg:
     param2（str）: 由登入得到的JWT token
 --------------------------------------*/
 function detect_abnormal(array, token){
-    
     var col_length = array[0].length;
 
     //一次跑一組(同一行)相同時間sensors偵測異常趨勢
     for(let col=0; col<col_length; col++){
+
+        //發生異常時，存所有的異常資訊(之後會存到檔案)
+        var log_text = "";
 
         //挑出不同線同一時段的slope，用於計算標準差，算出四分位數上限和下限
         var same_time_interval_slopes = [];
@@ -145,6 +149,7 @@ function detect_abnormal(array, token){
             all_info_slopes.push(array[row][col]);
         }
         console.log(same_time_interval_slopes);
+        log_text += same_time_interval_slopes.toString()+"\n";
 
         /*------------------------------------------
           以下為四分位數算法
@@ -159,10 +164,12 @@ function detect_abnormal(array, token){
         //計算中位數
         var median = median_number(same_time_interval_slopes);
         console.log("中位數: "+median);
+        log_text += "中位數: "+median+"\n";
         
         //計算標準差
         var std = Math.stDeviation(same_time_interval_slopes);
         console.log("標準差: "+std);
+        log_text += "標準差: "+std+"\n";
         
         //常態分佈上限
         var top_normal_limit = median + 2.698*std;
@@ -172,6 +179,10 @@ function detect_abnormal(array, token){
         console.log("to: "+timeConverter(all_info_slopes[0].to));
         console.log("top: "+top_normal_limit);
         console.log("bottom: "+bottom_normal_limit);
+        log_text += "from: "+timeConverter(all_info_slopes[0].from)+"\n";
+        log_text += "to: "+timeConverter(all_info_slopes[0].to)+"\n";
+        log_text += "top: "+top_normal_limit+"\n";
+        log_text += "bottom: "+bottom_normal_limit+"\n";
         
 
         for(let index=0; index<all_info_slopes.length; index++){
@@ -185,11 +196,29 @@ function detect_abnormal(array, token){
             if(test_value > top_normal_limit){
                 console.log("sensorId: "+all_info_slopes[index].sensorId);
                 console.log("異常狀況： 過高！");
+                log_text += "sensorId: "+all_info_slopes[index].sensorId+"\n";
+                log_text += "異常狀況： 過高！"+"\n";
+                log_text += "---------------------------\n\n";
+
+                fs.appendFile("log_file", log_text, function(err) {
+                    if(err) {
+                        return console.log(err);
+                    }
+                });
                 save_abnormal_data(api_url+"api/add/abnormal/data", token, sensorId, from_time, to_time, 1);
             }
             if(test_value < bottom_normal_limit){
                 console.log("sensorId: "+all_info_slopes[index].sensorId);
                 console.log("異常狀況: 過低！");
+                log_text += "sensorId: "+all_info_slopes[index].sensorId+"\n";
+                log_text += "異常狀況： 過低！"+"\n";
+                log_text += "---------------------------\n\n";
+
+                fs.appendFile("log_file", log_text, function(err) {
+                    if(err) {
+                        return console.log(err);
+                    }
+                });
                 save_abnormal_data(api_url+"api/add/abnormal/data", token, sensorId, from_time, to_time, 0);
             }
         }
