@@ -20,9 +20,9 @@ var interval = 1.5;
 detect();
 
 //之後固定時間 週期性偵測
-setInterval(function(){
-    detect(); 
-}, 12*60*1000);
+// setInterval(function(){
+//     detect(); 
+// }, 12*60*1000);
 
 //需要等token傳回才能繼續
 async function detect() {
@@ -30,10 +30,10 @@ async function detect() {
     var token = await methods.getToken(api_url+"api/account/login/");
 
     var d = new Date();
-    var toEpoch = d.getTime();
-    var fromEpoch = toEpoch - (interval*60*60*1000);
-    // var toEpoch = 1547910000000;
-    // var fromEpoch = 1547740800000;
+    // var toEpoch = d.getTime();
+    // var fromEpoch = toEpoch - (interval*60*60*1000);
+    var toEpoch = 1547910000000;
+    var fromEpoch = 1547740800000;
     
     //輪到判斷哪個type
     for(let type_num=0; type_num<sensortype.length; type_num++){

@@ -205,7 +205,7 @@ function detect_abnormal(array, token){
                         return console.log(err);
                     }
                 });
-                save_abnormal_data(api_url+"api/add/abnormal/data", token, sensorId, from_time, to_time, 1);
+                // save_abnormal_data(api_url+"api/add/abnormal/data", token, sensorId, from_time, to_time, 1);
             }
             if(test_value < bottom_normal_limit){
                 console.log("sensorId: "+all_info_slopes[index].sensorId);
@@ -219,7 +219,7 @@ function detect_abnormal(array, token){
                         return console.log(err);
                     }
                 });
-                save_abnormal_data(api_url+"api/add/abnormal/data", token, sensorId, from_time, to_time, 0);
+                // save_abnormal_data(api_url+"api/add/abnormal/data", token, sensorId, from_time, to_time, 0);
             }
         }
         console.log("--------------------------------");
