@@ -181,16 +181,16 @@ function detect_abnormal(array, token){
             var from_time = all_info_slopes[index].from;
             var to_time = all_info_slopes[index].to;
 
-            // state: 0 -> 過高 ， 1 -> 過低
+            // state: 1 -> 過高 ， 0 -> 過低
             if(test_value > top_normal_limit){
                 console.log("sensorId: "+all_info_slopes[index].sensorId);
                 console.log("異常狀況： 過高！");
-                save_abnormal_data(api_url+"api/add/abnormal/data", token, sensorId, from_time, to_time, 0);
+                save_abnormal_data(api_url+"api/add/abnormal/data", token, sensorId, from_time, to_time, 1);
             }
             if(test_value < bottom_normal_limit){
                 console.log("sensorId: "+all_info_slopes[index].sensorId);
                 console.log("異常狀況: 過低！");
-                save_abnormal_data(api_url+"api/add/abnormal/data", token, sensorId, from_time, to_time, 1);
+                save_abnormal_data(api_url+"api/add/abnormal/data", token, sensorId, from_time, to_time, 0);
             }
         }
         console.log("--------------------------------");
