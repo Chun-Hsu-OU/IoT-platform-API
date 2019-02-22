@@ -152,7 +152,7 @@ search.get('/sensors/:sensortype/:sensorid', function(req, res) {
   });
 });
 
-// 收水表最新數據
+// 收水表最新澆水量
 search.get('/meter/new/:sensorid', function(req, res) {
   var d = new Date();
   var adjust = 3600*1000;
@@ -188,7 +188,55 @@ search.get('/meter/new/:sensorid', function(req, res) {
         res.send(JSON.stringify(amount, null, 2));
       }
       else {
-        res.send("無數據");
+        res.send("no data");
+      }
+    }
+  });
+});
+
+// 取得一段時間內所有的每次澆水量
+search.get('/meter/interval/:sensorid/:begin/:end', function(req, res) {
+  var params = {
+    TableName: "METER",
+    ProjectionExpression: "sensorId, #time_id, #v",
+    KeyConditionExpression: "sensorId = :sensor_id and #time_id between :t1 and :t2",
+    ExpressionAttributeNames: {
+      "#time_id": "timestamp",
+      "#v": "value"
+    },
+    ExpressionAttributeValues: {
+      ":sensor_id": req.params.sensorid,
+      ":t1": Number(req.params.begin),
+      ":t2": Number(req.params.end)
+    }
+  };
+
+  res.set('Access-Control-Allow-Origin', '*');
+  docClient.query(params, function(err, data) {
+    if (err) {
+      console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
+      res.status(404).send("Unable to Query. Error");
+    } else {
+      console.log("Query succeeded.");
+      if(data.Count >= 2){
+        //存放每一次澆水量資料
+        var amounts_in_interval = {};
+        var Items = [];
+        for(let i=0; i<data.Count; i++){
+          var obj = {};
+          if(i != data.Count-1){
+            var water_amount = (data.Items[i+1].value - data.Items[i].value) * 1000;
+            obj.value = water_amount;
+            obj.sensorId = req.params.sensorid;
+            obj.timestamp = data.Items[i+1].timestamp;
+            Items.push(obj);
+          }
+        }
+        amounts_in_interval.Items = Items;
+        amounts_in_interval.Count = Items.length;
+        res.send(JSON.stringify(amounts_in_interval, null, 2));
+      }else{
+        res.send("no data");
       }
     }
   });
