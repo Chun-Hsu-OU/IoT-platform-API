@@ -17,7 +17,7 @@ AWS.config.update({
 
 var docClient = new AWS.DynamoDB.DocumentClient();
 
-// adds a fcmToken and account binding
+// 新增 fcmToken 和 account 的綁定
 fcm.post('/fcm/add_binding', unlencodedParser, function(req, res) {
   var params = {
     TableName: "FCM_binding",
@@ -39,7 +39,7 @@ fcm.post('/fcm/add_binding', unlencodedParser, function(req, res) {
   });
 });
 
-// adds a fcmToken and account binding
+// 刪除 fcmToken 和 account 的綁定
 fcm.post('/fcm/delete_binding', unlencodedParser, function(req, res) {
     var params = {
         TableName: "FCM_binding",
@@ -58,6 +58,42 @@ fcm.post('/fcm/delete_binding', unlencodedParser, function(req, res) {
             res.send("deleted a fcmToken and account binding");
         }
     });
+});
+
+// 以account去尋找與哪些手機綁定
+fcm.get('/fcm/search_binding/:uuid', function(req, res) {
+  var params = {
+    TableName: "FCM_binding",
+    FilterExpression: "#account = :uuid",
+    ExpressionAttributeNames: {
+      "#account": "account"
+    },
+    ExpressionAttributeValues: {
+      ":uuid": req.params.uuid
+    }
+  };
+  res.set('Access-Control-Allow-Origin', '*');
+
+  docClient.scan(params, onScan);
+
+  function onScan(err, data) {
+    if (err) {
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      console.log("Scan succeeded.");
+      var fcm_tokens = [];
+      for(let i=0; i<data.Count; i++){
+        fcm_tokens.push(data.Items[i].fcm_token);
+      }
+      res.send(JSON.stringify(fcm_tokens, null, 2));
+
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);
+      }
+    }
+  }
 });
 
 module.exports = fcm;
