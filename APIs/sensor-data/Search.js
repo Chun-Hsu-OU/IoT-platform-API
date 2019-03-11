@@ -112,6 +112,41 @@ search.get('/sensors_in_group/:groupId', function(req, res) {
   });
 });
 
+// 只搜尋sensorhub名稱
+search.get('/sensor_group/name/:groupId', function(req, res) {
+  var params = {
+    TableName: "Sensor_Group",
+    ProjectionExpression: "#name",
+    FilterExpression: "#group = :group_id",
+    ExpressionAttributeNames: {
+      "#name": "name",
+      "#group": "groupId"
+    },
+    ExpressionAttributeValues: {
+      ":group_id": req.params.groupId
+    }
+  };
+  res.set('Access-Control-Allow-Origin', '*');
+
+  docClient.scan(params, onScan);
+
+  function onScan(err, data) {
+    if (err) {
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      // print all the movies
+      console.log("Scan succeeded.");
+      res.send(JSON.stringify(data.Items[0].name, null, 2));
+
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);
+      }
+    }
+  }
+});
+
 // 拿一個sensor最新的數據
 search.get('/sensors/:sensortype/:sensorid', function(req, res) {
   var d = new Date();

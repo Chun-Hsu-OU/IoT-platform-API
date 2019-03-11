@@ -113,6 +113,8 @@ add.post('/add/abnormal/data', unlencodedParser, function(req, res) {
   var params = {
     TableName: "Abnormal_data",
     Item: {
+      "sensor_type": req.body.sensor_type,
+      "sensor_name": req.body.sensor_name,
       "sensorId": req.body.sensorId,
       "from_time": req.body.from_time,
       "to_time": req.body.to_time,
