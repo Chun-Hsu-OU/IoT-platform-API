@@ -18,8 +18,8 @@ AWS.config.update({
 
 var docClient = new AWS.DynamoDB.DocumentClient();
 
-// 線性回歸
-analysis.get('/linear/:sensortype/:sensorid/:begin/:end', function(req, res) {
+// 可調整偵測範圍的線性回歸
+analysis.get('/linear/:interval/:sensortype/:sensorid/:begin/:end', function(req, res) {
   // each sensor has a different time sync
   var params = {
     TableName: req.params.sensortype,
@@ -44,7 +44,7 @@ analysis.get('/linear/:sensortype/:sensorid/:begin/:end', function(req, res) {
     } else {
       if(data.Count > 0){
         //自訂時間(小時)
-        var interval = 2;
+        var interval = parseFloat(req.params.interval);
         //記錄所有斜率資料(from、to、slope)
         var all_outcome = [];
         
