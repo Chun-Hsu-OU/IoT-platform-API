@@ -40,7 +40,7 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
     if(hour == 8){
       if(minute >= 30){
         //拿當天8:00~8:30
-        // console.log(">= 8:30");
+        console.log(">= 8:30");
         d.setHours(8, 30, 0);
         // console.log(d);
         to = d.getTime() - (8*60*60*1000);
@@ -50,7 +50,7 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
         from = d.getTime() - (8*60*60*1000);
       }else{
         //拿前一天8:00~8:30
-        // console.log("< 8:30");
+        console.log("< 8:30");
         var day = d.getDate();
         d.setDate(day-1);
         d.setHours(8, 30, 0);
@@ -63,7 +63,7 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
       }
     }else{
       //拿當天8:00~8:30
-      // console.log("> 8點");
+      console.log("> 8點");
       d.setHours(8, 30, 0);
       // console.log(d.getTime());
       to = d.getTime() - (8*60*60*1000);
@@ -74,7 +74,7 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
     }
   }else{
     //拿前一天8:00~8:30
-    // console.log("< 8點");
+    console.log("< 8點");
     var day = d.getDate();
     d.setDate(day-1);
     d.setHours(8, 30, 0);
