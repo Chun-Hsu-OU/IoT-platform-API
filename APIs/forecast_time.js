@@ -41,7 +41,7 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
       if(minute >= 30){
         //拿當天8:00~8:30
         // console.log(">= 8:30");
-        d.setMinutes(30);
+        d.setHours(8, 30, 0);
         // console.log(d);
         to = d.getTime() - (8*60*60*1000);
 
