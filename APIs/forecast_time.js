@@ -35,6 +35,8 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
   console.log(d);
   var hour = d.getHours();
   var minute = d.getMinutes();
+  console.log(hour);
+  console.log(minute);
   var from = 0;
   var to = 0;
   if(hour >= 8){
