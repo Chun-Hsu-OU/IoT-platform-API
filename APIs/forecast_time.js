@@ -65,11 +65,11 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
       //拿當天8:00~8:30
       console.log("> 8點");
       d.setHours(8, 30, 0);
-      console.log(d);
+      console.log(d.getTime());
       to = d.getTime();
       
       d.setHours(8, 0, 0);
-      console.log(d);
+      console.log(d.getTime());
       from = d.getTime();
     }
   }else{
