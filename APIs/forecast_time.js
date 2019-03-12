@@ -32,6 +32,7 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 // 拿一個sensor最新的數據
 forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
   var d = new Date();
+  console.log(d);
   var hour = d.getHours();
   var minute = d.getMinutes();
   var from = 0;
