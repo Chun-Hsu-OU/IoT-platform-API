@@ -19,7 +19,7 @@ var control = require('./APIs/Control');
 var agri_log = require('./APIs/Agri_log');
 var file_manage = require('./APIs/S3_file_manage');
 var fcm_binding = require('./APIs/fcm_binding');
-// var forecast_time = require('./APIs/forecast_time');
+var forecast_time = require('./APIs/forecast_time');
 var open = require('./APIs/open');
 
 //var unlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -40,7 +40,7 @@ app.use('/api/', control);
 app.use('/api/', agri_log);
 app.use('/api/', file_manage);
 app.use('/api/', fcm_binding);
-// app.use('/api/', forecast_time);
+app.use('/api/', forecast_time);
 app.use('/open/', open);
 
 
