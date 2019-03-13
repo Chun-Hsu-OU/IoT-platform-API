@@ -32,7 +32,7 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 // 拿一個sensor最新的數據
 forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
   var d = new Date();
-  //先調成台灣時間
+  //先調成台灣時間，最後再改回unix time
   d = d.getTime() + 8*60*60*1000;
   d = new Date(d);
   console.log("現在時間: "+d);
