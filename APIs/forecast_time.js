@@ -32,58 +32,66 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 // 拿一個sensor最新的數據
 forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
   var d = new Date();
+  //先調成台灣時間
+  d = d.getTime() + 8*60*60*1000;
+  d = new Date(d);
+  console.log("現在時間: "+d);
+
   var hour = d.getHours();
   var minute = d.getMinutes();
+  console.log("日期:"+d.getDate());
+  console.log("小時:"+hour);
+  console.log("分鐘:"+minute);
   var from = 0;
   var to = 0;
   if(hour >= 8){
     if(hour == 8){
       if(minute >= 30){
-        //拿當天8:00~8:30
-        // console.log(">= 8:30");
+        // 拿當天8:00~8:30
+        console.log(">= 8:30");
         d.setHours(8, 30, 0);
-        // console.log(d);
         to = d.getTime() - (8*60*60*1000);
+        console.log(to);
 
         d.setMinutes(0);
-        // console.log(d);
         from = d.getTime() - (8*60*60*1000);
+        console.log(from);
       }else{
         //拿前一天8:00~8:30
-        // console.log("< 8:30");
+        console.log("< 8:30");
         var day = d.getDate();
         d.setDate(day-1);
         d.setHours(8, 30, 0);
-        // console.log(d);
         to = d.getTime() - (8*60*60*1000);
+        console.log(to);
 
         d.setMinutes(0);
-        // console.log(d);
         from = d.getTime() - (8*60*60*1000);
+        console.log(from);
       }
     }else{
       //拿當天8:00~8:30
-      // console.log("> 8點");
+      console.log("> 8點");
       d.setHours(8, 30, 0);
-      // console.log(d.getTime());
       to = d.getTime() - (8*60*60*1000);
-      
+      console.log(to);
+
       d.setHours(8, 0, 0);
-      // console.log(d.getTime());
       from = d.getTime() - (8*60*60*1000);
+      console.log(from);
     }
   }else{
     //拿前一天8:00~8:30
-    // console.log("< 8點");
+    console.log("< 8點");
     var day = d.getDate();
     d.setDate(day-1);
     d.setHours(8, 30, 0);
-    // console.log(d);
     to = d.getTime() - (8*60*60*1000);
+    console.log(to);
 
     d.setMinutes(0);
-    // console.log(d);
     from = d.getTime() - (8*60*60*1000);
+    console.log(from);
   }
 
   var params = {
