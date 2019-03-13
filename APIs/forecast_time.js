@@ -11,8 +11,8 @@ admin.initializeApp({
     databaseURL: "https://hsnl-lab-usage.firebaseio.com"
 });
 
-var api_url = "http://127.0.0.1:3000/";
-// var api_url = "http://nthu-smart-farming.kits.tw:3000/";
+// var api_url = "http://127.0.0.1:3000/";
+var api_url = "http://nthu-smart-farming.kits.tw:3000/";
 
 var unlencodedParser = bodyParser.urlencoded({
   extended: false
@@ -76,7 +76,7 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
       to = d.getTime() - (8*60*60*1000);
       console.log(to);
 
-      d.setHours(8, 0, 0);
+      d.setMinutes(0);
       from = d.getTime() - (8*60*60*1000);
       console.log(from);
     }
@@ -162,8 +162,6 @@ function send_message(fcm_token, message){
 
 /*-------------------------------------
 功用: 從登入 api 取得 token
-Arg:
-    param1（str）: 登入的 api 網址
 --------------------------------------*/
 function getToken() {
   var options = {
