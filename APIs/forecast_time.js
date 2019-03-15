@@ -126,7 +126,7 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
         console.log(data.Items[0].value);
         console.log(time);
         query_and_send_to_fcmTokens(req.params.uuid, message);
-        res.send(JSON.stringify("預測澆水量: "+Math.floor(time)+"秒", null, 2));
+        res.send(JSON.stringify(Math.floor(time), null, 2));
       }else {
         res.send("No data");
       }
