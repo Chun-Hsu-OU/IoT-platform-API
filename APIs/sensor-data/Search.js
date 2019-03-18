@@ -190,7 +190,7 @@ search.get('/sensors/:sensortype/:sensorid', function(req, res) {
 // 收水表最新澆水量
 search.get('/meter/new/:sensorid', function(req, res) {
   var d = new Date();
-  var adjust = 3600*1000;
+  var adjust = 24*60*60*1000;
 
   var params = {
     TableName: "METER",
