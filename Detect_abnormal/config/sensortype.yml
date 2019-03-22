@@ -1,5 +1,18 @@
-- "AIR_TEMPERATURE"
-- "AIR_HUMIDITY"
-- "SOIL_EC"
-- "SOIL_HUMIDITY"
-- "SOIL_TEMPERATURE"
+# 要偵測的 sensorType
+pingtung:
+  - "AIR_TEMPERATURE"
+  - "AIR_HUMIDITY"
+  - "SOIL_EC"
+  - "SOIL_HUMIDITY"
+  - "SOIL_TEMPERATURE"
+
+dapingwo:
+  - "SOIL_TEMPERATURE"
+  - "SOIL_HUMIDITY"
+  - "SOIL_EC"
+
+jiangxia:
+  - "SOIL_TEMPERATURE"
+  - "SOIL_HUMIDITY"
+  - "SOIL_EC"
+  
