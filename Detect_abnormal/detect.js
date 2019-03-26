@@ -79,8 +79,8 @@ async function cycle_detect(){
 
     if(check_dapingwo){
         console.log("大平窩 數據穩定!");
-        //土壤溫度 B5 1
-        var period_dapingwo = await methods.cal_period("SOIL_TEMPERATURE", "6976f093-d7ca-4822-b260-63ecf1373b9f", token);
+        //土壤溫度 B4 2
+        var period_dapingwo = await methods.cal_period("SOIL_TEMPERATURE", "adabe2d6-e43f-43e5-9cf3-719405288301", token);
         console.log(period_dapingwo);
         detect_dapingwo(period_dapingwo[1]);
         setInterval(function(){
