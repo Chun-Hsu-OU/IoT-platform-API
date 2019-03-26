@@ -223,123 +223,124 @@ control.get('/search/control/all', function(req, res) {
 
 control.post('/control/:item', unlencodedParser, function(req, res) {
   
-  var params = {
-    TableName: "Controller",
-    Key: {
-        "controllerId": req.body.controllerId
-    },
-    UpdateExpression: "set #thing = :status",
-    ExpressionAttributeNames:{
-        "#thing": req.params.item
-    },
-    ExpressionAttributeValues:{
-        ":status": req.body.status
-    },
-    ReturnValues:"UPDATED_NEW"
-  };
+  // var params = {
+  //   TableName: "Controller",
+  //   Key: {
+  //       "controllerId": req.body.controllerId
+  //   },
+  //   UpdateExpression: "set #thing = :status",
+  //   ExpressionAttributeNames:{
+  //       "#thing": req.params.item
+  //   },
+  //   ExpressionAttributeValues:{
+  //       ":status": req.body.status
+  //   },
+  //   ReturnValues:"UPDATED_NEW"
+  // };
 
-  res.set('Access-Control-Allow-Origin', '*');
+  // res.set('Access-Control-Allow-Origin', '*');
 
-  console.log("Updating the item...");
-  docClient.update(params, function(err, data) {
-      if (err) {
-          console.error("Unable to UPDATE item. Error JSON:", JSON.stringify(err, null, 2));
-          res.send("Error Updating Item");
-      } else {
+  // console.log("Updating the item...");
+  // docClient.update(params, function(err, data) {
+  //     if (err) {
+  //         console.error("Unable to UPDATE item. Error JSON:", JSON.stringify(err, null, 2));
+  //         res.send("Error Updating Item");
+  //     } else {
           
 
-          console.log("UPDATEItem succeeded:", JSON.stringify(data, null, 2));
-          res.send("更新成功");
-      }
-  });
+  //         console.log("UPDATEItem succeeded:", JSON.stringify(data, null, 2));
+  //         res.send("更新成功");
+  //     }
+  // });
 
   //檢查對應內容是否正確
-  // var status = JSON.parse(req.body.status);
-  // var check = true;
-  // if(req.params.item == "work_cycle"){
-  //   if(typeof status != "string"){
-  //     check = false;
-  //   }
-  // }else if(req.params.item == "clock_setting"){
-  //   if(Array.isArray(status)){
-  //     for(let i=0; i<status.length; i++){
-  //       if(typeof status[i].duration == "undefined"){
-  //         check = false;
-  //       }
-  //       if(typeof status[i].start == "undefined"){
-  //         check = false;
-  //       }
-  //       if(typeof status[i].weekday == "undefined"){
-  //         check = false;
-  //       }
-  //     }
-  //   }else{
-  //     check = false;
-  //   }
-  // }else if(req.params.item == "rules"){
-  //   if(Array.isArray(status)){
-  //     for(let i=0; i<status.length; i++){
-  //       if(typeof status[i].block == "undefined"){
-  //         check = false;
-  //       }
-  //       if(typeof status[i].duration == "undefined"){
-  //         check = false;
-  //       }
-  //       if(typeof status[i].name == "undefined"){
-  //         check = false;
-  //       }
-  //       if(typeof status[i].sensorId == "undefined"){
-  //         check = false;
-  //       }
-  //       if(typeof status[i].symbol == "undefined"){
-  //         check = false;
-  //       }
-  //       if(typeof status[i].type == "undefined"){
-  //         check = false;
-  //       }
-  //       if(typeof status[i].value == "undefined"){
-  //         check = false;
-  //       }
-  //     }
-  //   }else{
-  //     check = false;
-  //   }
-  // }
+  var status = req.body.status;
+  console.log("type:");
+  console.log(typeof req.body.status);
+  // console.log(req.body.status);
+  var check = true;
+  if(req.params.item == "work_cycle"){
+    if(typeof status != "string"){
+      check = false;
+    }
+  }else if(req.params.item == "clock_setting"){
+    if(Array.isArray(status)){
+      for(let i=0; i<status.length; i++){
+        if(typeof status[i].duration == "undefined"){
+          check = false;
+        }
+        if(typeof status[i].start == "undefined"){
+          check = false;
+        }
+        if(typeof status[i].weekday == "undefined"){
+          check = false;
+        }
+      }
+    }else{
+      check = false;
+    }
+  }else if(req.params.item == "rules"){
+    if(Array.isArray(status)){
+      for(let i=0; i<status.length; i++){
+        if(typeof status[i].block == "undefined"){
+          check = false;
+        }
+        if(typeof status[i].duration == "undefined"){
+          check = false;
+        }
+        if(typeof status[i].name == "undefined"){
+          check = false;
+        }
+        if(typeof status[i].sensorId == "undefined"){
+          check = false;
+        }
+        if(typeof status[i].symbol == "undefined"){
+          check = false;
+        }
+        if(typeof status[i].type == "undefined"){
+          check = false;
+        }
+        if(typeof status[i].value == "undefined"){
+          check = false;
+        }
+      }
+    }else{
+      check = false;
+    }
+  }
   
-  // if(check){
-  //   var params = {
-  //     TableName: "Controller",
-  //     Key: {
-  //         "controllerId": req.body.controllerId
-  //     },
-  //     UpdateExpression: "set #thing = :status",
-  //     ExpressionAttributeNames:{
-  //         "#thing": req.params.item
-  //     },
-  //     ExpressionAttributeValues:{
-  //         ":status": req.body.status
-  //     },
-  //     ReturnValues:"UPDATED_NEW"
-  //   };
+  if(check){
+    var params = {
+      TableName: "Controller",
+      Key: {
+          "controllerId": req.body.controllerId
+      },
+      UpdateExpression: "set #thing = :status",
+      ExpressionAttributeNames:{
+          "#thing": req.params.item
+      },
+      ExpressionAttributeValues:{
+          ":status": req.body.status
+      },
+      ReturnValues:"UPDATED_NEW"
+    };
   
-  //   res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Origin', '*');
   
-  //   console.log("Updating the item...");
-  //   docClient.update(params, function(err, data) {
-  //       if (err) {
-  //           console.error("Unable to UPDATE item. Error JSON:", JSON.stringify(err, null, 2));
-  //           res.send("Error Updating Item");
-  //       } else {
-            
-  
-  //           console.log("UPDATEItem succeeded:", JSON.stringify(data, null, 2));
-  //           res.send("更新成功");
-  //       }
-  //   });
-  // }else{
-  //   res.send("欄位不正確，無法更新");
-  // }
-  
+    console.log("Updating the item...");
+    docClient.update(params, function(err, data) {
+        if (err) {
+            console.error("Unable to UPDATE item. Error JSON:", JSON.stringify(err, null, 2));
+            res.send("Error Updating Item");
+        } else {
+            console.log("UPDATEItem succeeded:", JSON.stringify(data, null, 2));
+            res.send("update succeeded");
+        }
+    });
+  }else{
+    res.send("The required value is not given, cannot be updated");
+  }
+
 });
 
 control.post('/control/rule/length', unlencodedParser, function(req, res) {
