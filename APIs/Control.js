@@ -334,7 +334,7 @@ control.post('/control/:item', unlencodedParser, function(req, res) {
             res.send("Error Updating Item");
         } else {
             console.log("UPDATEItem succeeded:", JSON.stringify(data, null, 2));
-            res.send("update succeeded");
+            res.send("UPDATEItem succeeded");
         }
     });
   }else{
