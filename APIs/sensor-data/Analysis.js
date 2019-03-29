@@ -183,4 +183,41 @@ analysis.get('/sensor/cal_avg_interval/:sensortype/:sensorid', function(req, res
   });
 });
 
+analysis.get('/abnormal/data_in_interval/:sensorid/:from/:to', function(req, res) {
+  // each sensor has a different time sync
+  var params = {
+    TableName: "Abnormal_data",
+    ProjectionExpression: "sensorId, #from, #to, #state, #name",
+    KeyConditionExpression: "sensorId = :sensor_id and #from >= :from",
+    FilterExpression: "#to <= :to",
+    ExpressionAttributeNames: {
+      "#from": "from_time",
+      "#to": "to_time",
+      "#state": "state",
+      "#name": "sensor_name"
+    },
+    ExpressionAttributeValues: {
+      ":sensor_id": req.params.sensorid,
+      ":from": Number(req.params.from),
+      ":to": Number(req.params.to)
+    }
+  };
+
+  res.set('Access-Control-Allow-Origin', '*');
+  docClient.query(params, function(err, data) {
+    if (err) {
+      console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
+      res.status(404).send("Unable to Query. Error");
+    } else {
+      console.log("Query succeeded.");
+      // 有查到資料才補
+      if(data.Count > 0){
+        res.send(JSON.stringify(data, null, 2));
+      }else{
+        res.send("No data");
+      }
+    }
+  });
+});
+
 module.exports = analysis;
