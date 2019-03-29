@@ -190,7 +190,7 @@ function filterOutlier(array, area, token){
                 console.log("sensor 名稱: "+all_info_slopes[i].name);
                 console.log("從: "+timeConverter(all_info_slopes[i].from));
                 console.log("到: "+timeConverter(all_info_slopes[i].to));
-                console.log(all_info_slopes[i].sensorId+" 異常上升");
+                console.log(all_info_slopes[i].sensorId+" 高於正常值");
                 save_info.state = 1;
                 save_abnormal_data(save_info, token);
             }
@@ -200,7 +200,7 @@ function filterOutlier(array, area, token){
                 console.log("sensor 名稱: "+all_info_slopes[i].name);
                 console.log("從: "+timeConverter(all_info_slopes[i].from));
                 console.log("到: "+timeConverter(all_info_slopes[i].to));
-                console.log(all_info_slopes[i].sensorId+" 異常下降");
+                console.log(all_info_slopes[i].sensorId+" 低於正常值");
                 save_info.state = 0;
                 save_abnormal_data(save_info, token);
             }

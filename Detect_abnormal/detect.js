@@ -60,6 +60,7 @@ async function cycle_detect(){
 
     
     //新竹大平窩
+    //檢查所有sensorhub下的sensor都有資料再進行偵測
     var check_dapingwo = true;
     for(let group_num=0; group_num < sensorhub.dapingwo.length; group_num++){
         var sensors_info = await methods.httpGet(api_url+"api/sensors_in_group/"+sensorhub.dapingwo[group_num], token);    
@@ -91,6 +92,7 @@ async function cycle_detect(){
     }
 
     //屏東江夏
+    //檢查所有sensorhub下的sensor都有資料再進行偵測
     var check_jiangxia = true;
     for(let group_num=0; group_num < sensorhub.jiangxia.length; group_num++){
         var sensors_info = await methods.httpGet(api_url+"api/sensors_in_group/"+sensorhub.jiangxia[group_num], token);    
@@ -136,6 +138,7 @@ async function detect_pingtung(period) {
     //輪到判斷哪個type
     for(let type_num=0; type_num<sensortype.pingtung.length; type_num++){
         
+        console.log("----------------------------------");
         //儲存同一種類sensor的所有斜率資料
         var multi_line_slopes = [];
 
@@ -151,12 +154,14 @@ async function detect_pingtung(period) {
                 //判斷是要偵測的type就開始算sensor在這個時間區段的斜率
                 if(sensor.sensorType == sensortype.pingtung[type_num]){
                     var one_line_slopes = await methods.httpGet(api_url + 'api/linear/' + period +'/' + sensor.sensorType + '/' + sensor.sensorId + '/' + fromEpoch + '/' + toEpoch, token);
-                    methods.add_name_and_type(one_line_slopes, hub_name+" "+sensor.num, sensor.sensorType);
-                    multi_line_slopes.push(one_line_slopes);
+                    //檢查sensor是否有數據
+                    if(one_line_slopes != "No data"){
+                        methods.add_name_and_type(one_line_slopes, hub_name+" "+sensor.num, sensor.sensorType);
+                        multi_line_slopes.push(one_line_slopes);
+                    }
                 }
             }
         }
-        console.log("----------------------------------");
         console.log(sensortype.pingtung[type_num]);
         console.log();
         console.log(multi_line_slopes);
@@ -178,6 +183,7 @@ async function detect_dapingwo(period) {
     //輪到判斷哪個type
     for(let type_num=0; type_num<sensortype.dapingwo.length; type_num++){
         
+        console.log("----------------------------------");
         //儲存同一種類sensor的所有斜率資料
         var multi_line_slopes = [];
 
@@ -193,12 +199,14 @@ async function detect_dapingwo(period) {
                 //判斷是要偵測的type就開始算sensor在這個時間區段的斜率
                 if(sensor.sensorType == sensortype.dapingwo[type_num]){
                     var one_line_slopes = await methods.httpGet(api_url + 'api/linear/' + period +'/' + sensor.sensorType + '/' + sensor.sensorId + '/' + fromEpoch + '/' + toEpoch, token);
-                    methods.add_name_and_type(one_line_slopes, hub_name+" "+sensor.num, sensor.sensorType);
-                    multi_line_slopes.push(one_line_slopes);
+                    //檢查sensor是否有數據
+                    if(one_line_slopes != "No data"){
+                        methods.add_name_and_type(one_line_slopes, hub_name+" "+sensor.num, sensor.sensorType);
+                        multi_line_slopes.push(one_line_slopes);
+                    }
                 }
             }
         }
-        console.log("----------------------------------");
         console.log(sensortype.dapingwo[type_num]);
         console.log();
         console.log(multi_line_slopes);
@@ -221,6 +229,7 @@ async function detect_jiangxia(period) {
     //輪到判斷哪個type
     for(let type_num=0; type_num<sensortype.jiangxia.length; type_num++){
         
+        console.log("----------------------------------");
         //儲存同一種類sensor的所有斜率資料
         var multi_line_slopes = [];
 
@@ -236,12 +245,14 @@ async function detect_jiangxia(period) {
                 //判斷是要偵測的type就開始算sensor在這個時間區段的斜率
                 if(sensor.sensorType == sensortype.jiangxia[type_num]){
                     var one_line_slopes = await methods.httpGet(api_url + 'api/linear/' + period +'/' + sensor.sensorType + '/' + sensor.sensorId + '/' + fromEpoch + '/' + toEpoch, token);
-                    methods.add_name_and_type(one_line_slopes, hub_name+" "+sensor.num, sensor.sensorType);
-                    multi_line_slopes.push(one_line_slopes);
+                    //檢查sensor是否有數據
+                    if(one_line_slopes != "No data"){
+                        methods.add_name_and_type(one_line_slopes, hub_name+" "+sensor.num, sensor.sensorType);
+                        multi_line_slopes.push(one_line_slopes);
+                    }
                 }
             }
         }
-        console.log("----------------------------------");
         console.log(sensortype.jiangxia[type_num]);
         console.log();
         console.log(multi_line_slopes);

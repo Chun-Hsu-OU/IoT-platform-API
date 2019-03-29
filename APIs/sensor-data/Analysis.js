@@ -113,6 +113,8 @@ analysis.get('/linear/:interval/:sensortype/:sensorid/:begin/:end', function(req
         console.log("/////////結束//////////"); 
         console.log("");
         console.log("");
+      }else{
+        res.send("No data");
       }
       
     }
