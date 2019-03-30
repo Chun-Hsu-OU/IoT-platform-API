@@ -137,9 +137,10 @@ function save_abnormal_data(info, token) {
 Arg:
     param1（arr）: 同一種類的sensors一段時間的斜率
     param2 (str) : 場域名稱
+    param3 (str) : sensor type
     param3 (str) : 從登入得到的JWT token
 --------------------------------------*/
-function filterOutlier(array, area, token){
+function filterOutlier(array, area, type, token){
 
     var col_length = array[0].length;
 
@@ -170,39 +171,61 @@ function filterOutlier(array, area, token){
         console.log("最大值: "+maxValue);
         console.log("最小值: "+minValue);
 
-        //挑出異常值
-        for(let i=0; i<all_info_slopes.length; i++){
-            var test_value = all_info_slopes[i].slope;
+        var mean= Math.mean(same_time_interval_slopes);
+        console.log("平均值: "+mean);
+        //可能有異常
+        var potential_anomaly = false;
+        var threshold = 0;
+        if(type == "SOIL_EC"){
+            threshold = 10;
+        }else{
+            threshold = 1;
+        }
 
-            //要儲存的資料
-            var save_info = {};
-            save_info.area = area;
-            save_info.sensor_type = all_info_slopes[i].type;
-            save_info.sensor_name = all_info_slopes[i].name;
-            save_info.sensorId = all_info_slopes[i].sensorId;
-            save_info.from_time = all_info_slopes[i].from;
-            save_info.to_time = all_info_slopes[i].to;
-
-            // state: 1 -> 過高 ， 0 -> 過低
-            if(test_value > maxValue){
-                console.log("異常值: "+test_value);
-                console.log("場域: "+area);
-                console.log("sensor 名稱: "+all_info_slopes[i].name);
-                console.log("從: "+timeConverter(all_info_slopes[i].from));
-                console.log("到: "+timeConverter(all_info_slopes[i].to));
-                console.log(all_info_slopes[i].sensorId+" 高於正常值");
-                save_info.state = 1;
-                save_abnormal_data(save_info, token);
+        console.log("type: "+type);
+        console.log("門檻值: "+threshold);
+        for(let i=0; i<same_time_interval_slopes.length; i++){
+            var test_value = Math.abs(same_time_interval_slopes[i] - mean);
+            if(test_value > threshold){
+                potential_anomaly = true;
             }
-            if(test_value < minValue){
-                console.log("異常值: "+test_value);
-                console.log("場域: "+area);
-                console.log("sensor 名稱: "+all_info_slopes[i].name);
-                console.log("從: "+timeConverter(all_info_slopes[i].from));
-                console.log("到: "+timeConverter(all_info_slopes[i].to));
-                console.log(all_info_slopes[i].sensorId+" 低於正常值");
-                save_info.state = 0;
-                save_abnormal_data(save_info, token);
+        }
+
+        if(potential_anomaly){
+            //挑出異常值
+            for(let i=0; i<all_info_slopes.length; i++){
+                var test_value = all_info_slopes[i].slope;
+
+                //要儲存的資料
+                var save_info = {};
+                save_info.area = area;
+                save_info.sensor_type = all_info_slopes[i].type;
+                save_info.sensor_name = all_info_slopes[i].name;
+                save_info.sensorId = all_info_slopes[i].sensorId;
+                save_info.from_time = all_info_slopes[i].from;
+                save_info.to_time = all_info_slopes[i].to;
+
+                // state: 1 -> 過高 ， 0 -> 過低
+                if(test_value > maxValue){
+                    console.log("異常值: "+test_value);
+                    console.log("場域: "+area);
+                    console.log("sensor 名稱: "+all_info_slopes[i].name);
+                    console.log("從: "+timeConverter(all_info_slopes[i].from));
+                    console.log("到: "+timeConverter(all_info_slopes[i].to));
+                    console.log(all_info_slopes[i].sensorId+" 高於正常值");
+                    save_info.state = 1;
+                    save_abnormal_data(save_info, token);
+                }
+                if(test_value < minValue){
+                    console.log("異常值: "+test_value);
+                    console.log("場域: "+area);
+                    console.log("sensor 名稱: "+all_info_slopes[i].name);
+                    console.log("從: "+timeConverter(all_info_slopes[i].from));
+                    console.log("到: "+timeConverter(all_info_slopes[i].to));
+                    console.log(all_info_slopes[i].sensorId+" 低於正常值");
+                    save_info.state = 0;
+                    save_abnormal_data(save_info, token);
+                }
             }
         }
     }
@@ -235,6 +258,10 @@ function Array_Sort_Numbers(inputarray){
     return inputarray.sort(function(a, b) {
         return a - b;
     });
+}
+
+Math.mean= function(array){
+    return array.reduce(function(a, b){ return a+b; })/array.length;
 }
 
 /*-------------------------------------

@@ -210,7 +210,6 @@ analysis.get('/abnormal/data_in_interval/:sensorid/:from/:to', function(req, res
       res.status(404).send("Unable to Query. Error");
     } else {
       console.log("Query succeeded.");
-      // 有查到資料才補
       if(data.Count > 0){
         res.send(JSON.stringify(data, null, 2));
       }else{

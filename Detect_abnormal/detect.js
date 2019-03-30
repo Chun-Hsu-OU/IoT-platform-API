@@ -168,7 +168,7 @@ async function detect_pingtung(period) {
         console.log();
 
         //開始偵測異常
-        methods.filterOutlier(multi_line_slopes, "火龍果", token);
+        methods.filterOutlier(multi_line_slopes, "火龍果", sensortype.pingtung[type_num], token);
     }
 }
 
@@ -213,7 +213,7 @@ async function detect_dapingwo(period) {
         console.log();
 
         //開始偵測異常
-        methods.filterOutlier(multi_line_slopes, "大平窩", token);
+        methods.filterOutlier(multi_line_slopes, "大平窩", sensortype.dapingwo[type_num], token);
     }
 }
 
@@ -259,7 +259,7 @@ async function detect_jiangxia(period) {
         console.log();
 
         //開始偵測異常
-        methods.filterOutlier(multi_line_slopes, "江夏", token);
+        methods.filterOutlier(multi_line_slopes, "江夏", sensortype.jiangxia[type_num], token);
     }
 }
 
