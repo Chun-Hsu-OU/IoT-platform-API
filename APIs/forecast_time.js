@@ -46,10 +46,10 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
   var to = 0;
   if(hour >= 8){
     if(hour == 8){
-      if(minute >= 30){
-        // 拿當天8:00~8:30
-        console.log(">= 8:30");
-        d.setHours(8, 30, 0);
+      if(minute >= 40){
+        // 拿當天8:00~8:40
+        console.log(">= 8:40");
+        d.setHours(8, 40, 0);
         to = d.getTime() - (8*60*60*1000);
         console.log(to);
 
@@ -57,11 +57,11 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
         from = d.getTime() - (8*60*60*1000);
         console.log(from);
       }else{
-        //拿前一天8:00~8:30
-        console.log("< 8:30");
+        //拿前一天8:00~8:40
+        console.log("< 8:40");
         var day = d.getDate();
         d.setDate(day-1);
-        d.setHours(8, 30, 0);
+        d.setHours(8, 40, 0);
         to = d.getTime() - (8*60*60*1000);
         console.log(to);
 
@@ -70,9 +70,9 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
         console.log(from);
       }
     }else{
-      //拿當天8:00~8:30
+      //拿當天8:00~8:40
       console.log("> 8點");
-      d.setHours(8, 30, 0);
+      d.setHours(8, 40, 0);
       to = d.getTime() - (8*60*60*1000);
       console.log(to);
 
@@ -81,11 +81,11 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
       console.log(from);
     }
   }else{
-    //拿前一天8:00~8:30
+    //拿前一天8:00~8:40
     console.log("< 8點");
     var day = d.getDate();
     d.setDate(day-1);
-    d.setHours(8, 30, 0);
+    d.setHours(8, 40, 0);
     to = d.getTime() - (8*60*60*1000);
     console.log(to);
 
@@ -128,6 +128,7 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
         query_and_send_to_fcmTokens(req.params.uuid, message);
         res.send(JSON.stringify(Math.floor(time), null, 2));
       }else {
+        query_and_send_to_fcmTokens(req.params.uuid, "目前無法預測澆水量");
         res.send("No data");
       }
     }
