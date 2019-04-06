@@ -122,13 +122,13 @@ forcast_time.get('/forecast_time/:uuid/:sensorId', function(req, res) {
       length = data.Count;
       if (length > 0) {
         var time = 0.00186 * data.Items[0].value + 17.98;
-        var message = "預測澆水量: "+Math.floor(time)+"秒";
+        var message = "預測澆水時間: "+Math.floor(time)+"秒";
         console.log(data.Items[0].value);
         console.log(time);
         query_and_send_to_fcmTokens(req.params.uuid, message);
         res.send(JSON.stringify(Math.floor(time), null, 2));
       }else {
-        query_and_send_to_fcmTokens(req.params.uuid, "目前無法預測澆水量");
+        query_and_send_to_fcmTokens(req.params.uuid, "目前無法預測澆水時間");
         res.send("No data");
       }
     }
