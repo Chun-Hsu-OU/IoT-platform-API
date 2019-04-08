@@ -150,8 +150,13 @@ search.get('/sensor_group/name/:groupId', function(req, res) {
 // 拿一個sensor最新的數據
 search.get('/sensors/:sensortype/:sensorid', function(req, res) {
   var d = new Date();
-  var adjust = 3600*1000;
-
+  var adjust = 0;
+  if(req.params.sensortype != "METER"){
+    adjust = 3600*1000;
+  }else{
+    adjust = 24*60*60*1000;
+  }
+  
   var params = {
     TableName: req.params.sensortype,
     ProjectionExpression: "sensorId, #time_id, #v",
