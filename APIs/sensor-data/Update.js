@@ -120,4 +120,36 @@ update.post('/update/sensor', unlencodedParser, function(req, res) {
   });
 });
 
+// Updates the chosen item in the "Sensors Table"
+update.post('/update/sensor/macAddr', unlencodedParser, function(req, res) {
+    var params = {
+      TableName: "Sensors",
+      Key: {
+          "groupId": req.body.groupId,
+          "sensorId": req.body.sensorId
+      },
+      UpdateExpression: "set #macAddr = :addr",
+      ExpressionAttributeNames:{
+          "#macAddr": "macAddr"
+      },
+      ExpressionAttributeValues:{
+          ":addr": req.body.macAddr
+      },
+      ReturnValues:"UPDATED_NEW"
+    };
+  
+    res.set('Access-Control-Allow-Origin', '*');
+  
+    console.log("Updating the item...");
+    docClient.update(params, function(err, data) {
+        if (err) {
+            console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+            res.send("Error Updating Item");
+        } else {
+            console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+            res.send("UpdateItem succeeded");
+        }
+    });
+  });
+
 module.exports = update;
