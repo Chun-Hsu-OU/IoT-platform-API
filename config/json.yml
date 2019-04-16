@@ -35,6 +35,8 @@ macAddr:
   # <國立台東大學>
   - "0000000005010ae6"
   - "000000000501019d"
+  # <2019實驗室測試用macAddr>
+  - "0000000005010b14"
 
 sensorTypes:
   a_tem: "AIR_TEMPERATURE"
