@@ -139,6 +139,17 @@ async function handle(data, macAddr){
                 methods.save_data(json.sensorTypes.real_ws, value ,id);
             }
         }
+    }else if(type == "C"){
+        var digit = parseFloat(str.slice(2,3));
+        var value = str.slice(11 - digit);
+        console.log("type:" + type);
+        console.log("num:" + num);
+        console.log("digit:" + digit);
+        console.log("value:" + value);
+        var id = await methods.searchId(macAddr, json.sensorTypes.co2, num);
+        console.log("CO2 id: " + id);
+        console.log("--------------------------------");
+        methods.save_data(json.sensorTypes.co2, value ,id);
     }else{
         console.log("err:"+str);
     }

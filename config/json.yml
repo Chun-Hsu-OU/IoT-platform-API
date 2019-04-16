@@ -51,3 +51,4 @@ sensorTypes:
   s_hum: "SOIL_HUMIDITY"
   s_tem: "SOIL_TEMPERATURE"
   wd: "WIND_DIRECTION"
+  co2: "CO2"
