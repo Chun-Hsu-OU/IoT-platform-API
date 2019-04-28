@@ -222,36 +222,6 @@ control.get('/search/control/all', function(req, res) {
 });
 
 control.post('/control/:item', unlencodedParser, function(req, res) {
-  
-  // var params = {
-  //   TableName: "Controller",
-  //   Key: {
-  //       "controllerId": req.body.controllerId
-  //   },
-  //   UpdateExpression: "set #thing = :status",
-  //   ExpressionAttributeNames:{
-  //       "#thing": req.params.item
-  //   },
-  //   ExpressionAttributeValues:{
-  //       ":status": req.body.status
-  //   },
-  //   ReturnValues:"UPDATED_NEW"
-  // };
-
-  // res.set('Access-Control-Allow-Origin', '*');
-
-  // console.log("Updating the item...");
-  // docClient.update(params, function(err, data) {
-  //     if (err) {
-  //         console.error("Unable to UPDATE item. Error JSON:", JSON.stringify(err, null, 2));
-  //         res.send("Error Updating Item");
-  //     } else {
-          
-
-  //         console.log("UPDATEItem succeeded:", JSON.stringify(data, null, 2));
-  //         res.send("更新成功");
-  //     }
-  // });
 
   //檢查對應內容是否正確
   var status = req.body.status;
@@ -343,34 +313,56 @@ control.post('/control/:item', unlencodedParser, function(req, res) {
 
 });
 
-control.post('/control/rule/length', unlencodedParser, function(req, res) {
+//=============================以下為control log==================================
+control.post('/add/control/log', unlencodedParser, function(req, res) {
+  var d = new Date();
+
   var params = {
-    TableName: "Controller",
-    Key: {
-        "controllerId": req.body.controllerId
+    TableName: "Control_log",
+    Item: {
+      "controllerId": req.body.controllerId,
+      "start_time": req.body.start_time,
+      "mode": req.body.mode,
+      "start_condition": req.body.start_condition,
+      "duration": req.body.duration
+    }
+  }
+
+  res.set('Access-Control-Allow-Origin', '*');
+
+  docClient.put(params, function(err, data) {
+    if (err) {
+      console.error("Unable add a control log", req.body.controllerId, ". Error JSON:", JSON.stringify(err, null, 2));
+      res.send("Unable add a control log", req.body.controllerId);
+    } else {
+      res.send("add a log successfully");
+    }
+  });
+});
+
+// Gets the certain controller
+control.get('/view/control/log/:controllerId', function(req, res) {
+  var params = {
+    TableName: "Control_log",
+    KeyConditionExpression: "#control = :controller_id",
+    ExpressionAttributeNames: {
+      "#control": "controllerId"
     },
-    UpdateExpression: "set #thing = :len",
-    ExpressionAttributeNames:{
-        "#thing": "rules_num"
-    },
-    ExpressionAttributeValues:{
-        ":len": req.body.status
-    },
-    ReturnValues:"UPDATED_NEW"
+    ExpressionAttributeValues: {
+      ":controller_id": req.params.controllerId
+    }
   };
 
   res.set('Access-Control-Allow-Origin', '*');
 
-  console.log("Updating the item...");
-  docClient.update(params, function(err, data) {
-      if (err) {
-          console.error("Unable to UPDATE item. Error JSON:", JSON.stringify(err, null, 2));
-          res.send("Error Updating Item");
-      } else {
-          console.log("UPDATEItem succeeded:", JSON.stringify(data, null, 2));
-          res.send("UPDATEItem succeeded");
-      }
+  docClient.query(params, function(err, data) {
+    if (err) {
+      console.error("Unable to Query. Error:", JSON.stringify(err, null, 2));
+      res.send("Unable to query the table.");
+    } else {
+      console.log("Query succeeded.");
+      res.send(JSON.stringify(data, null, 2));
+    }
   });
 });
-
 module.exports = control;
