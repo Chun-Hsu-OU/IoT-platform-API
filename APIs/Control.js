@@ -324,7 +324,8 @@ control.post('/add/control/log', unlencodedParser, function(req, res) {
       "start_time": req.body.start_time,
       "mode": req.body.mode,
       "start_condition": req.body.start_condition,
-      "duration": req.body.duration
+      "duration": req.body.duration,
+      "state": req.body.state
     }
   }
 
