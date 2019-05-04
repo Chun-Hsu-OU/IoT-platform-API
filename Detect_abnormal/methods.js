@@ -158,6 +158,28 @@ function filterOutlier(array, area, type, token){
         }
         console.log(same_time_interval_slopes);
 
+        //先把資料不完整的挑出來儲存並刪除(slope = x)，才不會影響到後面計算四分位數
+        for(let i=0; i<same_time_interval_slopes.length; i++){
+            if(same_time_interval_slopes[i] == "x"){
+                //要儲存的資料
+                var save_info = {};
+                save_info.area = area;
+                save_info.sensor_type = all_info_slopes[i].type;
+                save_info.sensor_name = all_info_slopes[i].name;
+                save_info.sensorId = all_info_slopes[i].sensorId;
+                save_info.from_time = all_info_slopes[i].from;
+                save_info.to_time = all_info_slopes[i].to;          
+
+                // state: 0 -> 過低，1 -> 過高 ，2 -> 資料不完整
+                save_info.state = 2;
+                save_abnormal_data(save_info, token);
+
+                //刪除元素
+                same_time_interval_slopes.splice(i, 1);
+                all_info_slopes.splice(i, 1);
+            }
+        }
+
         var q1 = Quartile_25(same_time_interval_slopes);
         var q3 = Quartile_75(same_time_interval_slopes);
         var iqr = q3 - q1;
@@ -205,17 +227,7 @@ function filterOutlier(array, area, type, token){
                 save_info.from_time = all_info_slopes[i].from;
                 save_info.to_time = all_info_slopes[i].to;
 
-                // state: 1 -> 過高 ， 0 -> 過低
-                if(test_value > maxValue){
-                    console.log("異常值: "+test_value);
-                    console.log("場域: "+area);
-                    console.log("sensor 名稱: "+all_info_slopes[i].name);
-                    console.log("從: "+timeConverter(all_info_slopes[i].from));
-                    console.log("到: "+timeConverter(all_info_slopes[i].to));
-                    console.log(all_info_slopes[i].sensorId+" 高於正常值");
-                    save_info.state = 1;
-                    save_abnormal_data(save_info, token);
-                }
+                // state: 0 -> 過低，1 -> 過高 ，2 -> 資料不完整
                 if(test_value < minValue){
                     console.log("異常值: "+test_value);
                     console.log("場域: "+area);
@@ -224,6 +236,16 @@ function filterOutlier(array, area, type, token){
                     console.log("到: "+timeConverter(all_info_slopes[i].to));
                     console.log(all_info_slopes[i].sensorId+" 低於正常值");
                     save_info.state = 0;
+                    save_abnormal_data(save_info, token);
+                }
+                if(test_value > maxValue){
+                    console.log("異常值: "+test_value);
+                    console.log("場域: "+area);
+                    console.log("sensor 名稱: "+all_info_slopes[i].name);
+                    console.log("從: "+timeConverter(all_info_slopes[i].from));
+                    console.log("到: "+timeConverter(all_info_slopes[i].to));
+                    console.log(all_info_slopes[i].sensorId+" 高於正常值");
+                    save_info.state = 1;
                     save_abnormal_data(save_info, token);
                 }
             }

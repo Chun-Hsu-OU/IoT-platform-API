@@ -74,35 +74,49 @@ analysis.get('/linear/:interval/:sensortype/:sensorid/:begin/:end', function(req
             console.log("from: "+begin);
             console.log("to: "+temp_end);
             console.log("");
-            /*
-              自訂時間(小時) 內資料變成dataset給線性回歸使用
-              dataset元素:
-              1. index
-              2. value
-            */
-            var dataset = [];
-            for(let i=0; i<data_in_interval.length; i++){
-              var pair = [];
-              pair[0] = i;
-              pair[1] = parseFloat(data_in_interval[i].value);
-              dataset.push(pair);
+    
+            if(data_in_interval.length > 5){
+              //資料較完整，可以算斜率
+
+              /*
+                自訂時間(小時) 內資料變成dataset給線性回歸使用
+                dataset元素:
+                1. index
+                2. value
+              */
+              var dataset = [];
+              for(let i=0; i<data_in_interval.length; i++){
+                var pair = [];
+                pair[0] = i;
+                pair[1] = parseFloat(data_in_interval[i].value);
+                dataset.push(pair);
+              }
+              console.log(dataset);
+
+              //使用線性回歸，計算斜率
+              var result = regression.linear(dataset);
+              var slope = result.equation[0];
+              var yIntercept = result.equation[1];
+              console.log("y = "+slope+"x + "+yIntercept);
+              console.log("----------------------------------");
+
+              //將這段時間的結果放進 all_outcome 陣列
+              var obj = {};
+              obj.sensorId = req.params.sensorid;
+              obj.from = begin;
+              obj.to = temp_end;
+              obj.slope = slope;
+              all_outcome.push(obj);
+            }else{
+              //資料不完整，算出的斜率也不正確，所以設slope = x
+              var obj = {};
+              obj.sensorId = req.params.sensorid;
+              obj.from = begin;
+              obj.to = temp_end;
+              obj.slope = "x";
+              all_outcome.push(obj);
             }
-            console.log(dataset);
-
-            //使用線性回歸，計算斜率
-            var result = regression.linear(dataset);
-            var slope = result.equation[0];
-            var yIntercept = result.equation[1];
-            console.log("y = "+slope+"x + "+yIntercept);
-            console.log("----------------------------------");
-
-            //將這段時間的結果放進 all_outcome 陣列
-            var obj = {};
-            obj.sensorId = req.params.sensorid;
-            obj.from = begin;
-            obj.to = temp_end;
-            obj.slope = slope;
-            all_outcome.push(obj);
+            
           }
 
           //計算下一個 自訂時間(小時)
@@ -184,7 +198,6 @@ analysis.get('/sensor/cal_avg_interval/:sensortype/:sensorid', function(req, res
 });
 
 analysis.get('/abnormal/data_in_interval/:sensorid/:from/:to', function(req, res) {
-  // each sensor has a different time sync
   var params = {
     TableName: "Abnormal_data",
     ProjectionExpression: "sensorId, #from, #to, #state, #name",
