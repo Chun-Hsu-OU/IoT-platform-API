@@ -220,7 +220,7 @@ function filterOutlier(array, area, type, token){
                 save_abnormal_data(save_info, token);
                 
                 //傳送推播通知
-                var messege = all_info_slopes[i].name + "在 " + 
+                var messege = Convert_type_to_Ch(all_info_slopes[i].type) + "感測器 " + all_info_slopes[i].name + "\n在 " + 
                             timeConverter(all_info_slopes[i].from) + "~" + timeConverter(all_info_slopes[i].to) +
                             " 之間數據量過少\n可能感測器狀況不穩，之後有中斷數據的風險，需至現場檢查並維修";
                 query_and_send_to_fcmTokens(area_to_uuid(area), messege);
@@ -290,7 +290,7 @@ function filterOutlier(array, area, type, token){
                     save_abnormal_data(save_info, token);
 
                     //傳送推播通知
-                    var messege = all_info_slopes[i].name + "在 " + 
+                    var messege = Convert_type_to_Ch(all_info_slopes[i].type) + "感測器 " + all_info_slopes[i].name + "\n在 " + 
                                 timeConverter(all_info_slopes[i].from) + "~" + timeConverter(all_info_slopes[i].to) +
                                 " 之間數據異常下降\n可能感測器有問題，需至現場檢查並維修";
                     query_and_send_to_fcmTokens(area_to_uuid(area), messege);
@@ -306,7 +306,7 @@ function filterOutlier(array, area, type, token){
                     save_abnormal_data(save_info, token);
 
                     //傳送推播通知
-                    var messege = all_info_slopes[i].name + "在 " + 
+                    var messege = Convert_type_to_Ch(all_info_slopes[i].type) + "感測器 " + all_info_slopes[i].name + "\n在 " + 
                                 timeConverter(all_info_slopes[i].from) + "~" + timeConverter(all_info_slopes[i].to) +
                                 " 之間數據異常上升\n可能感測器有問題，需至現場檢查並維修";
                     query_and_send_to_fcmTokens(area_to_uuid(area), messege);
@@ -364,6 +364,7 @@ function add_name_and_type(array, name, type){
 }
 
 function timeConverter(UNIX_timestamp){
+
     var a = new Date(UNIX_timestamp);
     var year = a.getFullYear();
     var month = "0" + (a.getMonth()+1);
@@ -373,7 +374,25 @@ function timeConverter(UNIX_timestamp){
     var seconds = "0" + a.getSeconds();
     var time = year + '/' + month.substr(-2) + '/' + date.substr(-2) + ' ' + hours.substr(-2) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
     return time;
-  }
+}
+
+function Convert_type_to_Ch(type){
+    var ch = "";
+
+    if(type == "AIR_TEMPERATURE"){
+        ch = "空氣溫度";
+    }else if(type == "AIR_HUMIDITY"){
+        ch = "空氣濕度";
+    }else if(type == "SOIL_TEMPERATURE"){
+        ch = "土壤溫度";
+    }else if(type == "SOIL_HUMIDITY"){
+        ch = "土壤濕度";
+    }else if(type == "SOIL_EC"){
+        ch = "土壤電導度";
+    }
+
+    return ch;
+}
   
 
 module.exports.httpGet = httpGet;
