@@ -93,35 +93,35 @@ async function cycle_detect(){
 
     //屏東江夏
     //檢查所有sensorhub下的sensor都有資料再進行偵測
-    var check_jiangxia = true;
-    for(let group_num=0; group_num < sensorhub.jiangxia.length; group_num++){
-        var sensors_info = await methods.httpGet(api_url+"api/sensors_in_group/"+sensorhub.jiangxia[group_num], token);    
-        for(let sensor_num=0; sensor_num < sensors_info.Items.length; sensor_num++){
-            var sensor = sensors_info.Items[sensor_num];
-            //檢查sensorhub裡要偵測的種類是否有資料
-            for(let type_num=0; type_num<sensortype.jiangxia.length; type_num++){
-                if(sensor.sensorType == sensortype.jiangxia[type_num]){
-                    var result = await methods.check_working(sensor.sensorType, sensor.sensorId, token);
-                    if(result == "No data"){
-                        check_jiangxia = false;
-                    }
-                }
-            }
-        }
-    }
+    // var check_jiangxia = true;
+    // for(let group_num=0; group_num < sensorhub.jiangxia.length; group_num++){
+    //     var sensors_info = await methods.httpGet(api_url+"api/sensors_in_group/"+sensorhub.jiangxia[group_num], token);    
+    //     for(let sensor_num=0; sensor_num < sensors_info.Items.length; sensor_num++){
+    //         var sensor = sensors_info.Items[sensor_num];
+    //         //檢查sensorhub裡要偵測的種類是否有資料
+    //         for(let type_num=0; type_num<sensortype.jiangxia.length; type_num++){
+    //             if(sensor.sensorType == sensortype.jiangxia[type_num]){
+    //                 var result = await methods.check_working(sensor.sensorType, sensor.sensorId, token);
+    //                 if(result == "No data"){
+    //                     check_jiangxia = false;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
-    if(check_jiangxia){
-        console.log("江夏 數據穩定!");
-        //土壤溫度 A1
-        var period_jiangxia = await methods.cal_period("SOIL_TEMPERATURE", "4d011db6-72b9-43b7-a83e-3b656ca509a9", token);
-        console.log(period_jiangxia);
-        detect_jiangxia(period_jiangxia[1]);
-        setInterval(function(){
-            detect_jiangxia(period_jiangxia[1]);
-        }, period_jiangxia[1]*60*60*1000);
-    }else{
-        console.log("江夏 數據中斷 無法偵測!");
-    }
+    // if(check_jiangxia){
+    //     console.log("江夏 數據穩定!");
+    //     //土壤溫度 A1
+    //     var period_jiangxia = await methods.cal_period("SOIL_TEMPERATURE", "4d011db6-72b9-43b7-a83e-3b656ca509a9", token);
+    //     console.log(period_jiangxia);
+    //     detect_jiangxia(period_jiangxia[1]);
+    //     setInterval(function(){
+    //         detect_jiangxia(period_jiangxia[1]);
+    //     }, period_jiangxia[1]*60*60*1000);
+    // }else{
+    //     console.log("江夏 數據中斷 無法偵測!");
+    // }
     
 }
 
@@ -217,49 +217,49 @@ async function detect_dapingwo(period) {
     }
 }
 
-async function detect_jiangxia(period) {
-    //每次request都要帶token才能拿資料
-    var token = await methods.getToken();
+// async function detect_jiangxia(period) {
+//     //每次request都要帶token才能拿資料
+//     var token = await methods.getToken();
 
-    var d = new Date();
-    var toEpoch = d.getTime();
-    // var toEpoch = 1552108800000;
-    var fromEpoch = toEpoch - (period*60*60*1000);
+//     var d = new Date();
+//     var toEpoch = d.getTime();
+//     // var toEpoch = 1552108800000;
+//     var fromEpoch = toEpoch - (period*60*60*1000);
 
-    //輪到判斷哪個type
-    for(let type_num=0; type_num<sensortype.jiangxia.length; type_num++){
+//     //輪到判斷哪個type
+//     for(let type_num=0; type_num<sensortype.jiangxia.length; type_num++){
         
-        console.log("----------------------------------");
-        //儲存同一種類sensor的所有斜率資料
-        var multi_line_slopes = [];
+//         console.log("----------------------------------");
+//         //儲存同一種類sensor的所有斜率資料
+//         var multi_line_slopes = [];
 
-        //挑出sensorhub中一樣type的sensor，檢查是否異常
-        for(let group_num=0; group_num < sensorhub.jiangxia.length; group_num++){
-            var hub_name = await methods.httpGet(api_url+"api/sensor_group/name/"+sensorhub.jiangxia[group_num], token);
-            console.log("hub_name: "+hub_name);
-            var sensors_info = await methods.httpGet(api_url+"api/sensors_in_group/"+sensorhub.jiangxia[group_num], token);
+//         //挑出sensorhub中一樣type的sensor，檢查是否異常
+//         for(let group_num=0; group_num < sensorhub.jiangxia.length; group_num++){
+//             var hub_name = await methods.httpGet(api_url+"api/sensor_group/name/"+sensorhub.jiangxia[group_num], token);
+//             console.log("hub_name: "+hub_name);
+//             var sensors_info = await methods.httpGet(api_url+"api/sensors_in_group/"+sensorhub.jiangxia[group_num], token);
             
-            for(let sensor_num=0; sensor_num < sensors_info.Items.length; sensor_num++){
-                var sensor = sensors_info.Items[sensor_num];
+//             for(let sensor_num=0; sensor_num < sensors_info.Items.length; sensor_num++){
+//                 var sensor = sensors_info.Items[sensor_num];
                 
-                //判斷是要偵測的type就開始算sensor在這個時間區段的斜率
-                if(sensor.sensorType == sensortype.jiangxia[type_num]){
-                    var one_line_slopes = await methods.httpGet(api_url + 'api/linear/' + period +'/' + sensor.sensorType + '/' + sensor.sensorId + '/' + fromEpoch + '/' + toEpoch, token);
-                    //檢查sensor是否有數據
-                    if(one_line_slopes != "No data"){
-                        methods.add_name_and_type(one_line_slopes, hub_name+" "+sensor.num, sensor.sensorType);
-                        multi_line_slopes.push(one_line_slopes);
-                    }
-                }
-            }
-        }
-        console.log(sensortype.jiangxia[type_num]);
-        console.log();
-        console.log(multi_line_slopes);
-        console.log();
+//                 //判斷是要偵測的type就開始算sensor在這個時間區段的斜率
+//                 if(sensor.sensorType == sensortype.jiangxia[type_num]){
+//                     var one_line_slopes = await methods.httpGet(api_url + 'api/linear/' + period +'/' + sensor.sensorType + '/' + sensor.sensorId + '/' + fromEpoch + '/' + toEpoch, token);
+//                     //檢查sensor是否有數據
+//                     if(one_line_slopes != "No data"){
+//                         methods.add_name_and_type(one_line_slopes, hub_name+" "+sensor.num, sensor.sensorType);
+//                         multi_line_slopes.push(one_line_slopes);
+//                     }
+//                 }
+//             }
+//         }
+//         console.log(sensortype.jiangxia[type_num]);
+//         console.log();
+//         console.log(multi_line_slopes);
+//         console.log();
 
-        //開始偵測異常
-        methods.filterOutlier(multi_line_slopes, "江夏", sensortype.jiangxia[type_num], token);
-    }
-}
+//         //開始偵測異常
+//         methods.filterOutlier(multi_line_slopes, "江夏", sensortype.jiangxia[type_num], token);
+//     }
+// }
 

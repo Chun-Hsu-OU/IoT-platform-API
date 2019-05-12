@@ -1,5 +1,13 @@
 var rp = require('request-promise');
-const fs = require('fs');
+var path = require('path'); // 引入路徑處理模組
+
+var admin = require("firebase-admin");
+var serviceAccount = require(path.resolve("../APIs/firebase/fir-storage-sdk.json"));
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://hsnl-lab-usage.firebaseio.com"
+});
 
 //API網址
 var api_url = "http://nthu-smart-farming.kits.tw:3000/";
@@ -132,6 +140,43 @@ function save_abnormal_data(info, token) {
     });
 }
 
+async function query_and_send_to_fcmTokens(uuid, message){
+  var token = await getToken();
+  var fcm_tokens = await httpGet(api_url+"api/fcm/search_binding/"+uuid, token);
+  for(let i=0; i<fcm_tokens.length; i++){
+      send_message(fcm_tokens[i], message);
+  }
+}
+
+function send_message(fcm_token, message){
+  var message = {
+      notification: {
+          title: "清華大學物聯網平台-異常狀況警報",
+          body: message
+      },
+      token: fcm_token
+  };
+
+  admin.messaging().send(message)
+      .then(function(response){
+          console.log("Successfully sent message:", response);
+      })
+      .catch(function(error){
+          console.log("Error sending message", error);
+      });
+}
+
+function area_to_uuid(area_name){
+    uuid = "";
+    if(area_name == "火龍果"){
+        uuid = "73b8d82e-4d0a-4761-9590-c659ab0c0d13";
+    }else if(area_name == "大平窩"){    
+        uuid = "e0c97039-5f58-4453-942e-a008fc4bec9c";
+    }
+
+    return uuid;
+}
+
 /*-------------------------------------
 功用: 以四分位數從一堆斜率中挑出異常值
 Arg:
@@ -173,6 +218,12 @@ function filterOutlier(array, area, type, token){
                 // state: 0 -> 過低，1 -> 過高 ，2 -> 資料不完整
                 save_info.state = 2;
                 save_abnormal_data(save_info, token);
+                
+                //傳送推播通知
+                var messege = all_info_slopes[i].name + "在 " + 
+                            timeConverter(all_info_slopes[i].from) + "~" + timeConverter(all_info_slopes[i].to) +
+                            " 之間數據量過少\n可能感測器狀況不穩，之後有中斷數據的風險，需至現場檢查並維修";
+                query_and_send_to_fcmTokens(area_to_uuid(area), messege);
 
                 //刪除元素
                 same_time_interval_slopes.splice(i, 1);
@@ -237,6 +288,12 @@ function filterOutlier(array, area, type, token){
                     console.log(all_info_slopes[i].sensorId+" 低於正常值");
                     save_info.state = 0;
                     save_abnormal_data(save_info, token);
+
+                    //傳送推播通知
+                    var messege = all_info_slopes[i].name + "在 " + 
+                                timeConverter(all_info_slopes[i].from) + "~" + timeConverter(all_info_slopes[i].to) +
+                                " 之間數據異常下降\n可能感測器有問題，需至現場檢查並維修";
+                    query_and_send_to_fcmTokens(area_to_uuid(area), messege);
                 }
                 if(test_value > maxValue){
                     console.log("異常值: "+test_value);
@@ -247,6 +304,12 @@ function filterOutlier(array, area, type, token){
                     console.log(all_info_slopes[i].sensorId+" 高於正常值");
                     save_info.state = 1;
                     save_abnormal_data(save_info, token);
+
+                    //傳送推播通知
+                    var messege = all_info_slopes[i].name + "在 " + 
+                                timeConverter(all_info_slopes[i].from) + "~" + timeConverter(all_info_slopes[i].to) +
+                                " 之間數據異常上升\n可能感測器有問題，需至現場檢查並維修";
+                    query_and_send_to_fcmTokens(area_to_uuid(area), messege);
                 }
             }
         }
@@ -302,16 +365,16 @@ function add_name_and_type(array, name, type){
 
 function timeConverter(UNIX_timestamp){
     var a = new Date(UNIX_timestamp);
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var year = a.getFullYear();
-    var month = months[a.getMonth()];
-    var date = a.getDate();
-    var hour = a.getHours();
-    var min = a.getMinutes();
-    var sec = a.getSeconds();
-    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+    var month = "0" + (a.getMonth()+1);
+    var date = "0" + a.getDate();
+    var hours = "0" + a.getHours();
+    var minutes = "0" + a.getMinutes();
+    var seconds = "0" + a.getSeconds();
+    var time = year + '/' + month.substr(-2) + '/' + date.substr(-2) + ' ' + hours.substr(-2) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
     return time;
-}
+  }
+  
 
 module.exports.httpGet = httpGet;
 module.exports.getToken = getToken;
