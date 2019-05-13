@@ -221,7 +221,7 @@ function filterOutlier(array, area, type, token){
                 
                 //傳送推播通知
                 var messege = Convert_type_to_Ch(all_info_slopes[i].type) + "感測器 " + all_info_slopes[i].name + "\n在 " + 
-                            timeConverter(all_info_slopes[i].from) + "~" + timeConverter(all_info_slopes[i].to) +
+                            timeConverter(all_info_slopes[i].from+8*60*60*1000) + "~" + timeConverter(all_info_slopes[i].to+8*60*60*1000) +
                             " 之間數據量過少\n可能感測器狀況不穩，之後有中斷數據的風險，需至現場檢查並維修";
                 query_and_send_to_fcmTokens(area_to_uuid(area), messege);
 
@@ -291,7 +291,7 @@ function filterOutlier(array, area, type, token){
 
                     //傳送推播通知
                     var messege = Convert_type_to_Ch(all_info_slopes[i].type) + "感測器 " + all_info_slopes[i].name + "\n在 " + 
-                                timeConverter(all_info_slopes[i].from) + "~" + timeConverter(all_info_slopes[i].to) +
+                                timeConverter(all_info_slopes[i].from+8*60*60*1000) + "~" + timeConverter(all_info_slopes[i].to+8*60*60*1000) +
                                 " 之間數據異常下降\n可能感測器有問題，需至現場檢查並維修";
                     query_and_send_to_fcmTokens(area_to_uuid(area), messege);
                 }
@@ -307,7 +307,7 @@ function filterOutlier(array, area, type, token){
 
                     //傳送推播通知
                     var messege = Convert_type_to_Ch(all_info_slopes[i].type) + "感測器 " + all_info_slopes[i].name + "\n在 " + 
-                                timeConverter(all_info_slopes[i].from) + "~" + timeConverter(all_info_slopes[i].to) +
+                                timeConverter(all_info_slopes[i].from+8*60*60*1000) + "~" + timeConverter(all_info_slopes[i].to+8*60*60*1000) +
                                 " 之間數據異常上升\n可能感測器有問題，需至現場檢查並維修";
                     query_and_send_to_fcmTokens(area_to_uuid(area), messege);
                 }
