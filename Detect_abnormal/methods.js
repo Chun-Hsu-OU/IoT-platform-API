@@ -269,48 +269,52 @@ function filterOutlier(array, area, type, token){
             for(let i=0; i<all_info_slopes.length; i++){
                 var test_value = all_info_slopes[i].slope;
 
-                //要儲存的資料
-                var save_info = {};
-                save_info.area = area;
-                save_info.sensor_type = all_info_slopes[i].type;
-                save_info.sensor_name = all_info_slopes[i].name;
-                save_info.sensorId = all_info_slopes[i].sensorId;
-                save_info.from_time = all_info_slopes[i].from;
-                save_info.to_time = all_info_slopes[i].to;
+                if(Math.abs(test_value - mean) > threshold){
+                    //要儲存的資料
+                    var save_info = {};
+                    save_info.area = area;
+                    save_info.sensor_type = all_info_slopes[i].type;
+                    save_info.sensor_name = all_info_slopes[i].name;
+                    save_info.sensorId = all_info_slopes[i].sensorId;
+                    save_info.from_time = all_info_slopes[i].from;
+                    save_info.to_time = all_info_slopes[i].to;
 
-                // state: 0 -> 過低，1 -> 過高 ，2 -> 資料不完整
-                if(test_value < minValue){
-                    console.log("異常值: "+test_value);
-                    console.log("場域: "+area);
-                    console.log("sensor 名稱: "+all_info_slopes[i].name);
-                    console.log("從: "+timeConverter(all_info_slopes[i].from));
-                    console.log("到: "+timeConverter(all_info_slopes[i].to));
-                    console.log(all_info_slopes[i].sensorId+" 低於正常值");
-                    save_info.state = 0;
-                    save_abnormal_data(save_info, token);
+                    // state: 0 -> 過低，1 -> 過高 ，2 -> 資料不完整
+                    if(test_value < minValue){
+                        console.log("異常值: "+test_value);
+                        console.log("場域: "+area);
+                        console.log("sensor 名稱: "+all_info_slopes[i].name);
+                        console.log("從: "+timeConverter(all_info_slopes[i].from));
+                        console.log("到: "+timeConverter(all_info_slopes[i].to));
+                        console.log(all_info_slopes[i].sensorId+" 低於正常值");
+                        save_info.state = 0;
+                        save_abnormal_data(save_info, token);
 
-                    //傳送推播通知
-                    var messege = Convert_type_to_Ch(all_info_slopes[i].type) + "感測器 " + all_info_slopes[i].name + "\n在 " + 
-                                timeConverter(all_info_slopes[i].from+8*60*60*1000) + "~" + timeConverter(all_info_slopes[i].to+8*60*60*1000) +
-                                " 之間數據異常下降\n可能感測器有問題，需至現場檢查並維修";
-                    query_and_send_to_fcmTokens(area_to_uuid(area), messege);
+                        //傳送推播通知
+                        var messege = Convert_type_to_Ch(all_info_slopes[i].type) + "感測器 " + all_info_slopes[i].name + "\n在 " + 
+                                    timeConverter(all_info_slopes[i].from+8*60*60*1000) + "~" + timeConverter(all_info_slopes[i].to+8*60*60*1000) +
+                                    " 之間數據異常下降\n可能感測器有問題，需至現場檢查並維修";
+                        query_and_send_to_fcmTokens(area_to_uuid(area), messege);
+                    }
+                    if(test_value > maxValue){
+                        console.log("異常值: "+test_value);
+                        console.log("場域: "+area);
+                        console.log("sensor 名稱: "+all_info_slopes[i].name);
+                        console.log("從: "+timeConverter(all_info_slopes[i].from));
+                        console.log("到: "+timeConverter(all_info_slopes[i].to));
+                        console.log(all_info_slopes[i].sensorId+" 高於正常值");
+                        save_info.state = 1;
+                        save_abnormal_data(save_info, token);
+
+                        //傳送推播通知
+                        var messege = Convert_type_to_Ch(all_info_slopes[i].type) + "感測器 " + all_info_slopes[i].name + "\n在 " + 
+                                    timeConverter(all_info_slopes[i].from+8*60*60*1000) + "~" + timeConverter(all_info_slopes[i].to+8*60*60*1000) +
+                                    " 之間數據異常上升\n可能感測器有問題，需至現場檢查並維修";
+                        query_and_send_to_fcmTokens(area_to_uuid(area), messege);
+                    }
                 }
-                if(test_value > maxValue){
-                    console.log("異常值: "+test_value);
-                    console.log("場域: "+area);
-                    console.log("sensor 名稱: "+all_info_slopes[i].name);
-                    console.log("從: "+timeConverter(all_info_slopes[i].from));
-                    console.log("到: "+timeConverter(all_info_slopes[i].to));
-                    console.log(all_info_slopes[i].sensorId+" 高於正常值");
-                    save_info.state = 1;
-                    save_abnormal_data(save_info, token);
 
-                    //傳送推播通知
-                    var messege = Convert_type_to_Ch(all_info_slopes[i].type) + "感測器 " + all_info_slopes[i].name + "\n在 " + 
-                                timeConverter(all_info_slopes[i].from+8*60*60*1000) + "~" + timeConverter(all_info_slopes[i].to+8*60*60*1000) +
-                                " 之間數據異常上升\n可能感測器有問題，需至現場檢查並維修";
-                    query_and_send_to_fcmTokens(area_to_uuid(area), messege);
-                }
+
             }
         }
     }
