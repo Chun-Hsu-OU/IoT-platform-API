@@ -16,8 +16,8 @@ AWS.config.update({
   endpoint: "https://dynamodb.ap-northeast-2.amazonaws.com"
 });
 
-var api_url = "http://127.0.0.1:3000/";
-// var api_url = "http://nthu-smart-farming.kits.tw:3000/";
+// var api_url = "http://127.0.0.1:3000/";
+var api_url = "http://nthu-smart-farming.kits.tw:3000/";
 
 var docClient = new AWS.DynamoDB.DocumentClient();
 
