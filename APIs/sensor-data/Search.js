@@ -274,9 +274,14 @@ search.get('/meter/interval/:sensorid/:begin/:end', function(req, res) {
         }
         amounts_in_interval.Items = Items;
         amounts_in_interval.Count = Items.length;
+        amounts_in_interval.ScannedCount = Items.length;
         res.send(JSON.stringify(amounts_in_interval, null, 2));
       }else{
-        res.send("no data");
+        var obj = {};
+        obj.Items = [];
+        obj.Count = 0;
+        obj.ScannedCount = 0;
+        res.send(JSON.stringify(obj, null, 2));
       }
     }
   });
