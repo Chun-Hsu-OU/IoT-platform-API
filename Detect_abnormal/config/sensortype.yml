@@ -3,16 +3,14 @@ pingtung:
   - "AIR_TEMPERATURE"
   - "AIR_HUMIDITY"
   - "SOIL_EC"
-  - "SOIL_HUMIDITY"
-  - "SOIL_TEMPERATURE"
+  # - "SOIL_HUMIDITY"
+  # - "SOIL_TEMPERATURE"
+  - "BATTERY_VOLTAGE"
+  - "LIGHT_INTENSITY"
 
 dapingwo:
   - "SOIL_TEMPERATURE"
   - "SOIL_HUMIDITY"
   - "SOIL_EC"
-
-jiangxia:
-  - "SOIL_TEMPERATURE"
-  - "SOIL_HUMIDITY"
-  - "SOIL_EC"
+  - "BATTERY_VOLTAGE"
   
