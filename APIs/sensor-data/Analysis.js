@@ -83,15 +83,25 @@ analysis.get('/linear/:interval/:sensortype/:sensorid/:begin/:end', function(req
                 dataset元素:
                 1. index
                 2. value
+
+                all_data只包含數據部分
               */
               var dataset = [];
+              var all_data = [];
               for(let i=0; i<data_in_interval.length; i++){
                 var pair = [];
                 pair[0] = i;
                 pair[1] = parseFloat(data_in_interval[i].value);
                 dataset.push(pair);
+                
+                all_data.push(parseFloat(data_in_interval[i].value));
               }
               console.log(dataset);
+
+              //計算區間中最大值和最低值的差
+              var max = Math.max(...all_data);
+              var min = Math.min(...all_data);
+              var difference = max - min;
 
               //使用線性回歸，計算斜率
               var result = regression.linear(dataset);
@@ -106,6 +116,7 @@ analysis.get('/linear/:interval/:sensortype/:sensorid/:begin/:end', function(req
               obj.from = begin;
               obj.to = temp_end;
               obj.slope = slope;
+              obj.difference = difference;
               all_outcome.push(obj);
             }else{
               //資料不完整，算出的斜率也不正確，所以設slope = x

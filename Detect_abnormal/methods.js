@@ -376,6 +376,7 @@ function filterOutlier(array, area, type, token){
         console.log("平均值: "+mean);
         //可能有異常
         var potential_anomaly = false;
+        //門檻值
         var threshold = 0;
         if(type == "SOIL_EC"){
             threshold = 11;
@@ -383,6 +384,13 @@ function filterOutlier(array, area, type, token){
             threshold = 0.67;
         }else{
             threshold = 0.6;
+        }
+        //區間中最大值和最低值差的門檻
+        var difference = 0;
+        if(type == "SOIL_EC"){
+            difference = 100;
+        }else{
+            difference = 5;
         }
 
         console.log("type: "+type);
@@ -399,7 +407,7 @@ function filterOutlier(array, area, type, token){
             for(let i=0; i<all_info_slopes.length; i++){
                 var test_value = all_info_slopes[i].slope;
 
-                if(Math.abs(test_value - mean) > threshold){
+                if(Math.abs(test_value - mean)>=threshold && all_info_slopes[i].difference>=difference){
                     //要儲存的資料
                     var save_info = {};
                     save_info.area = area;
