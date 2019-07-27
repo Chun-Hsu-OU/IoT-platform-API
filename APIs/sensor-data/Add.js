@@ -106,6 +106,29 @@ add.post('/add/sensor', unlencodedParser, function(req, res) {
   });
 });
 
+//加感測器數值進資料庫 (可自訂時間)
+add.post('/add/value', function(req, res) {
+
+  var params = {
+    TableName: req.body.sensorType,
+    Item: {
+      "sensorId": req.body.sensorId,
+      "timestamp": req.body.timestamp,
+      "sensorType": req.body.sensorType,
+      "value": req.body.value
+    }
+  };
+
+  docClient.put(params, function(err, data) {
+    if (err) {
+      console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      console.log("Added item:", JSON.stringify(data, null, 2));
+      res.send("Added sensing data of " + req.body.sensorId + " to DB");
+    }
+  });
+});
+
 // 增加一筆異常資料
 add.post('/add/abnormal/data', unlencodedParser, function(req, res) {
   var d = new Date();
