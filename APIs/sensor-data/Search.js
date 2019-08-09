@@ -332,6 +332,31 @@ search.get('/sensors/num/:macAddr/:sensorType', function(req, res) {
   }
 });
 
+search.get('/sensortype/all', function(req, res) {
+  var params = {
+    TableName: "All_types"
+  };
+  res.set('Access-Control-Allow-Origin', '*');
+
+  docClient.scan(params, onScan);
+
+  function onScan(err, data) {
+    if (err) {
+      console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+      // print all the movies
+      console.log("Scan succeeded.");
+      res.send(JSON.stringify(data, null, 2));
+
+      if (typeof data.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        params.ExclusiveStartKey = data.LastEvaluatedKey;
+        docClient.scan(params, onScan);
+      }
+    }
+  }
+});
+
 // 拿一個owner下所有的sensor資料
 search.get('/sensors_owned/:ownerId', function(req, res) {
   var params = {
