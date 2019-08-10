@@ -386,12 +386,7 @@ function filterOutlier(array, area, type, token){
             threshold = 0.6;
         }
         //區間中最大值和最低值差的門檻
-        var difference = 0;
-        if(type == "SOIL_EC"){
-            difference = 100;
-        }else{
-            difference = 5;
-        }
+        var difference = get_diff(type, area);
 
         console.log("type: "+type);
         console.log("門檻值: "+threshold);
@@ -458,6 +453,40 @@ function filterOutlier(array, area, type, token){
             }
         }
     }
+}
+
+function get_diff(type, area){
+    if(type == "SOIL_EC"){
+        return ec_diff(area);
+    }else if(type=="AIR_TEMPERATURE" || type=="SOIL_TEMPERATURE"){
+        return temp_diff(area);
+    }else{
+        return hum_diff(area);
+    }
+}
+
+function ec_diff(area){
+    var diff = 0;
+    if(area=="火龍果" || area=="大平窩"){
+        diff = 100;
+    }
+    return diff;
+}
+
+function temp_diff(area){
+    var diff = 0;
+    if(area=="火龍果" || area=="大平窩"){
+        diff = 5;
+    }
+    return diff;
+}
+
+function hum_diff(area){
+    var diff = 0;
+    if(area=="火龍果" || area=="大平窩"){
+        diff = 5;
+    }
+    return diff;
 }
 
 function Quartile_25(data) {
